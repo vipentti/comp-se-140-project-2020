@@ -31,6 +31,17 @@ namespace Common
             }
         }
 
+        public static async Task WaitForExponentialDelay(this Random random, int exponent, CancellationToken stoppingToken)
+        {
+            int randomDelay = random.Next(100, 670);
+            int secondsToWait = (int)Math.Pow(2, exponent);
+            int delay = randomDelay + secondsToWait * 1000;
+
+            Log.Information("Waiting for {Delay} milliseconds", delay);
+
+            await Task.Delay(delay, stoppingToken);
+        }
+
         ///<summary>
         /// Wait for RabbitMQ to start up
         ///</summary>
@@ -40,10 +51,14 @@ namespace Common
 
             Log.Information("Waiting for RabbitMQ");
 
+            int attempt = 0;
+            var random = new Random();
+
             while (true)
             {
                 try
                 {
+                    ++attempt;
                     var source = new CancellationTokenSource(1000);
                     using var linked = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, source.Token);
                     await client.ConnectAsync(Constants.RabbitHost, Constants.RabbitPort, linked.Token);
@@ -51,6 +66,14 @@ namespace Common
                 }
                 catch
                 {
+                    await random.WaitForExponentialDelay(attempt - 1, stoppingToken);
+
+                    // We have waited long enough
+                    if (attempt > 6)
+                    {
+                        Log.Fatal("Unable to connect to {Host}:{Port}", Constants.RabbitHost, Constants.RabbitPort);
+                        throw new InvalidOperationException($"Unable to connect to {Constants.RabbitHost}:{Constants.RabbitPort}");
+                    }
                 }
             }
 

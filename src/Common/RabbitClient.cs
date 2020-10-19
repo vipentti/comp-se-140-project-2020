@@ -84,17 +84,22 @@ namespace Common
 
         public async Task TryConnect(string uriString, string exchangeName, string routingKey, CancellationToken stoppingToken)
         {
+            var random = new Random();
+
+            int attempt = 0;
+
             while (!IsConnected)
             {
                 try
                 {
+                    ++attempt;
                     Connect(uriString, exchangeName, routingKey);
                     break;
                 }
                 catch
                 {
                     logger.LogInformation("Waiting for {Duration}", Constants.DelayBetweenConnectionAttempts);
-                    await Task.Delay(Constants.DelayBetweenConnectionAttempts, stoppingToken);
+                    await random.WaitForExponentialDelay(attempt - 1, stoppingToken);
                 }
             }
         }
@@ -116,11 +121,6 @@ namespace Common
         {
             channel?.Dispose();
             connection?.Dispose();
-
-            // fixes:
-            // Change RabbitClient.Dispose() to call GC.SuppressFinalize(object).
-            // This will prevent derived types that introduce a finalizer from
-            // needing to re-implement 'IDisposable' to call it. [Common]csharp(CA1816)
             GC.SuppressFinalize(this);
         }
     }

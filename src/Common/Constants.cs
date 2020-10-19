@@ -13,7 +13,7 @@ namespace Common
         /// <summary>give rabbitmq time to start</summary>
         public const int StartupDelay = 1 * 1000;
         public const int DelayBetweenConnectionAttempts = 1 * 1000;
-        public const int DelayAfterConnect = 1 * 1000;
+        public const int DelayAfterConnect = 2 * 1000;
         public const int IntermediateDelay = 1 * 1000;
         public const int LoopDelay = 10 * 1000;
 
