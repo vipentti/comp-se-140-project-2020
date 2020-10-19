@@ -1,0 +1,16 @@
+# directories
+**/bin/
+**/obj/
+**/out/
+**/.git
+**/.shared_volume
+**/.vs
+**/.vscode
+
+# files
+Dockerfile*
+**/*.trx
+**/*.md
+**/*.ps1
+**/*.cmd
+**/*.sh
