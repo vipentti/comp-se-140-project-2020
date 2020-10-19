@@ -59,7 +59,7 @@ namespace Common
                 try
                 {
                     ++attempt;
-                    var source = new CancellationTokenSource(1000);
+                    var source = new CancellationTokenSource(5000);
                     using var linked = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, source.Token);
                     await client.ConnectAsync(Constants.RabbitHost, Constants.RabbitPort, linked.Token);
                     break;
