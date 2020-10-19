@@ -53,7 +53,7 @@ This should return response similiar to:
 - Publishers and subscribers are loosely coupled
 - Publishers may simply send messages to the specific topic without having to know about subscribers
 
-## What I learned from this excercise
+## What I learned from this exercise
 
 - Improved understanding of RabbitMQ
 - How to utilize RabbitMQ's `C#`-client
