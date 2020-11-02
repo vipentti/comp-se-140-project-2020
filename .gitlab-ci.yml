@@ -1,4 +1,4 @@
-image: docker:latest
+image: docker/compose:latest
 
 # ### Define variables
 #
@@ -17,11 +17,11 @@ services:
 
 before_script:
   - docker info
+  - docker-compose version
 
 build:
   stage: build
   script:
-    - docker ps -a
     - docker-compose build
 
 
