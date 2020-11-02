@@ -8,6 +8,8 @@ variables:
   # 2) Name of directory used for keeping restored dependencies.
   NUGET_PACKAGES_DIRECTORY: '.nuget'
 
+  HTTP_SERVER_PORT: 8082
+
 stages:
   - build
   - test
@@ -30,5 +32,6 @@ deploy:
   script:
     # - 'export SHARED_VOLUME_DIR="$(dirname ${CI_PROJECT_DIR})/shared"'
     # - mkdir -pv ${SHARED_VOLUME_DIR}
+    - docker-compose down
     - docker-compose up -d
     - docker-compose ps
