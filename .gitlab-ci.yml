@@ -28,7 +28,7 @@ build:
 deploy:
   stage: deploy
   script:
-    - 'export SHARED_VOLUME_DIR="$(dirname ${CI_PROJECT_DIR})/shared"'
-    - mkdir -p ${SHARED_VOLUME_DIR}
+    - 'export SHARED_VOLUME_DIR="$(dirname ${CI_PROJECT_PATH})/shared"'
+    - mkdir -pv ${SHARED_VOLUME_DIR}
     - docker-compose up -d
     - docker-compose ps
