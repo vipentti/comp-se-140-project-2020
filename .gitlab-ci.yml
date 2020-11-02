@@ -11,6 +11,7 @@ variables:
 stages:
   - build
   - test
+  - deploy
 
 services:
   - docker:dind
@@ -24,4 +25,8 @@ build:
   script:
     - docker-compose build
 
-
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d
+    - docker-compose ps
