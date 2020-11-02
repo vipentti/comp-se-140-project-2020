@@ -22,5 +22,6 @@ build:
   stage: build
   script:
     - docker ps -a
+    - docker-compose build
 
 
