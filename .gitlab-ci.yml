@@ -1,0 +1,26 @@
+image: docker:latest
+
+# ### Define variables
+#
+variables:
+  # 1) Name of directory where restore and build objects are stored.
+  OBJECTS_DIRECTORY: 'obj'
+  # 2) Name of directory used for keeping restored dependencies.
+  NUGET_PACKAGES_DIRECTORY: '.nuget'
+
+stages:
+  - build
+  - test
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+
+build:
+  stage: build
+  script:
+    - docker ps -a
+
+
