@@ -32,6 +32,6 @@ deploy:
   stage: deploy
   script:
     # Ensure we re-start the containers
-    - docker-compose down
-    - docker-compose up -d
+    # - docker-compose down
+    - docker-compose up -d --force-recreate
     - docker-compose ps

@@ -51,9 +51,8 @@ namespace Observer
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("Clearing file {path}", settings.OutFilePath);
-
-            System.IO.File.WriteAllText(settings.OutFilePath, "");
+            // logger.LogInformation("Clearing file {path}", settings.OutFilePath);
+            // System.IO.File.WriteAllText(settings.OutFilePath, "");
 
             await ProgramCommon.WaitForRabbitMQ(stoppingToken);
 
