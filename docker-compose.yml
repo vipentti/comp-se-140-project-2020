@@ -35,13 +35,13 @@ services:
       - OutFilePath=/app/shared_volume/message.txt
 
     volumes:
-      - ./.shared_volume:/app/shared_volume
+      - ${SHARED_VOLUME_DIR:-./.shared_volume}:/app/shared_volume
 
   httpserver:
     hostname: httpserver
     container_name: ex-5-amqp-httpserver
     ports:
-        - "8080:80"
+        - "8082:80"
     build:
       context: ./src
       dockerfile: ./HttpServer/Dockerfile
@@ -50,7 +50,7 @@ services:
       - OutFilePath=/app/shared_volume/message.txt
 
     volumes:
-      - ./.shared_volume:/app/shared_volume
+      - ${SHARED_VOLUME_DIR:-./.shared_volume}:/app/shared_volume
 
     networks:
       - backend
