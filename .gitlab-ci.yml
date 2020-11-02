@@ -1,4 +1,4 @@
-image: docker/compose:latest
+image: docker/compose:1.27.4
 
 ### Define variables
 variables:
@@ -32,6 +32,5 @@ deploy:
   stage: deploy
   script:
     # Ensure we re-start the containers
-    # - docker-compose down
     - docker-compose up -d --force-recreate
     - docker-compose ps
