@@ -35,7 +35,7 @@ services:
       - OutFilePath=/app/shared_volume/message.txt
 
     volumes:
-      - ${SHARED_VOLUME_DIR:-./.shared_volume}:/app/shared_volume
+      - shared:/app/shared_volume
 
   httpserver:
     hostname: httpserver
@@ -50,7 +50,7 @@ services:
       - OutFilePath=/app/shared_volume/message.txt
 
     volumes:
-      - ${SHARED_VOLUME_DIR:-./.shared_volume}:/app/shared_volume
+      - shared:/app/shared_volume
 
     networks:
       - backend
@@ -79,3 +79,6 @@ services:
 
 networks:
     backend: {}
+
+volumes:
+    shared: {}
