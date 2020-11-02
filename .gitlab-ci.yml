@@ -1,13 +1,9 @@
 image: docker/compose:latest
 
-# ### Define variables
-#
+### Define variables
 variables:
-  # 1) Name of directory where restore and build objects are stored.
-  OBJECTS_DIRECTORY: 'obj'
-  # 2) Name of directory used for keeping restored dependencies.
-  NUGET_PACKAGES_DIRECTORY: '.nuget'
-
+  # The default config has the gitlab running in port 8080
+  # so this overrides the port when running the application
   HTTP_SERVER_PORT: 8082
 
 stages:
@@ -27,11 +23,15 @@ build:
   script:
     - docker-compose build
 
+test:
+  stage: test
+  script:
+    - echo "Tests will be run once they are implemented..."
+
 deploy:
   stage: deploy
   script:
-    # - 'export SHARED_VOLUME_DIR="$(dirname ${CI_PROJECT_DIR})/shared"'
-    # - mkdir -pv ${SHARED_VOLUME_DIR}
+    # Ensure we re-start the containers
     - docker-compose down
     - docker-compose up -d
     - docker-compose ps
