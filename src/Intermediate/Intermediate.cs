@@ -16,8 +16,8 @@ namespace Intermediate
 
         public Intermediate(IServiceProvider provider, ILogger<Intermediate> logger)
         {
-            this.original = provider.GetService<RabbitClient>();
-            this.intermediate = provider.GetService<RabbitClient>();
+            this.original = provider.GetRequiredService<RabbitClient>();
+            this.intermediate = provider.GetRequiredService<RabbitClient>();
             this.logger = logger;
 
             this.original.OnMessageReceived += OnOriginalMessage;
