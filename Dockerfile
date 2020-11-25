@@ -51,6 +51,7 @@ ENV EnvTargetProject=${TargetProject}
 COPY --from=publish /app/publish .
 
 # Create a script to run the specified TargetProject
+# This utilizes the build time argument TargetProjeect
 RUN echo "#!/bin/sh\nexec dotnet ${TargetProject}.dll" > entry.sh \
     && chmod +x ./entry.sh
 

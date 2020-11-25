@@ -8,6 +8,11 @@ using FluentAssertions;
 
 namespace E2E.Tests
 {
+    /// <summary>
+    /// Provides end-to-end testing for the HttpServer.
+    /// This requires that the HttpServer is running
+    /// at the url provided in HttpServerUrl configuration variable.
+    /// </summary>
     public class HttpServerTests
     {
         public class Settings
@@ -51,14 +56,48 @@ namespace E2E.Tests
         [Fact]
         public async Task Test_HttpServer_Returns_Messages()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, "");
+            async Task<string> makeRequest() {
+                using var request = new HttpRequestMessage(HttpMethod.Get, "");
 
-            var response = await SendRequest(request);
-            response.Should().NotBeNull();
-            response.IsSuccessStatusCode.Should().BeTrue();
+                var response = await SendRequest(request);
+                response.Should().NotBeNull();
+                response.IsSuccessStatusCode.Should().BeTrue();
 
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().NotBeNullOrEmpty();
+                return await response.Content.ReadAsStringAsync();
+            }
+
+            string content = await makeRequest();
+
+            const int MAX_ATTEMPTS = 10;
+            int attempt = 0;
+
+            var random = new Random();
+
+            // If the server returns OK but empty content, it may simply mean
+            // that the messages  have not been sent yet, so we want to give
+            // some time for the messages to be sent before giving up
+            while (string.IsNullOrEmpty(content) && attempt < MAX_ATTEMPTS) {
+                ++attempt;
+
+                int randomDelay = random.Next(100, 300);
+                await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
+                content = await makeRequest();
+
+                // Ensure lines are normalized
+                var maybeLines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                // If we have some content but not the full data
+                // try once more to get the data after a delay
+                // This should reduce the likelyhood that we read the content
+                // just before the second message was added
+                if (!string.IsNullOrEmpty(content) && maybeLines.Length < 2) {
+                    randomDelay = random.Next(100, 300);
+                    await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
+                    content = await makeRequest();
+                    break;
+                }
+            }
+
+            content.Should().NotBeNullOrEmpty(because: $"Failed after {attempt} attempt(s).");
 
             // Ensure lines are normalized
             var lines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
