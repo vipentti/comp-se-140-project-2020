@@ -42,14 +42,17 @@ namespace Common
             await Task.Delay(delay, stoppingToken);
         }
 
-        ///<summary>
-        /// Wait for RabbitMQ to start up
-        ///</summary>
-        public static async Task WaitForRabbitMQ(CancellationToken stoppingToken = new CancellationToken())
+        /// <summary>
+        /// Try to connect using TCP to the specified <paramref name="host"/> and <paramref
+        /// name="port"/>. If connection fails, it is re-attempted after a delay which increases
+        /// explonentially until <paramref name="maxAttempts"/> is reached. After which an <seealso
+        /// cref="InvalidOperationException"/> is thrown
+        /// </summary>
+        public static async Task WaitForTcpConnection(string host, int port, int maxAttempts = 6, CancellationToken stoppingToken = new CancellationToken())
         {
             using var client = new TcpClient();
 
-            Log.Information("Waiting for RabbitMQ");
+            Log.Information("Waiting for Tcp connection to {Host}:{Port}", host, port);
 
             int attempt = 0;
             var random = new Random();
@@ -61,7 +64,7 @@ namespace Common
                     ++attempt;
                     var source = new CancellationTokenSource(5000);
                     using var linked = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, source.Token);
-                    await client.ConnectAsync(Constants.RabbitHost, Constants.RabbitPort, linked.Token);
+                    await client.ConnectAsync(host, port, linked.Token);
                     break;
                 }
                 catch
@@ -69,13 +72,25 @@ namespace Common
                     await random.WaitForExponentialDelay(attempt - 1, stoppingToken);
 
                     // We have waited long enough
-                    if (attempt > 6)
+                    if (attempt > maxAttempts)
                     {
-                        Log.Fatal("Unable to connect to {Host}:{Port}", Constants.RabbitHost, Constants.RabbitPort);
-                        throw new InvalidOperationException($"Unable to connect to {Constants.RabbitHost}:{Constants.RabbitPort}");
+                        Log.Fatal("Unable to connect to {Host}:{Port}", host, port);
+                        throw new InvalidOperationException($"Unable to connect to {host}:{port}");
                     }
                 }
             }
+
+            Log.Information("Tcp connection to {Host}:{Port} was successful", host, port);
+        }
+
+        ///<summary>
+        /// Wait for RabbitMQ to start up
+        ///</summary>
+        public static async Task WaitForRabbitMQ(CancellationToken stoppingToken = new CancellationToken())
+        {
+            Log.Information("Waiting for RabbitMQ");
+
+            await WaitForTcpConnection(Constants.RabbitHost, Constants.RabbitPort, maxAttempts: 6, stoppingToken);
 
             Log.Information("RabbitMQ should be up!");
         }

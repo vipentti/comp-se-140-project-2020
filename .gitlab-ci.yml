@@ -2,9 +2,7 @@ image: docker/compose:1.27.4
 
 ### Define variables
 variables:
-  # The default config has the gitlab running in port 8080
-  # so this overrides the port when running the application
-  HTTP_SERVER_PORT: 8082
+  HTTP_SERVER_PORT: 8080
 
 stages:
   - build

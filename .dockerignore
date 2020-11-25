@@ -9,8 +9,10 @@
 
 # files
 Dockerfile*
+docker-compose*.yml
 **/*.trx
 **/*.md
 **/*.ps1
+**/*.pdf
 **/*.cmd
 **/*.sh
