@@ -21,9 +21,9 @@ namespace Original
         {
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
-            await ProgramCommon.WaitForRabbitMQ(stoppingToken);
+            await rabbitClient.WaitForRabbitMQ(stoppingToken);
 
-            await rabbitClient.TryConnect(Constants.RabbitUri, Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
+            await rabbitClient.TryConnect(Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
 
             logger.LogInformation("Connected");
 

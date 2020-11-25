@@ -42,10 +42,10 @@ namespace Intermediate
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await ProgramCommon.WaitForRabbitMQ(stoppingToken);
+            await original.WaitForRabbitMQ(stoppingToken);
 
-            await original.TryConnect(Constants.RabbitUri, Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
-            await intermediate.TryConnect(Constants.RabbitUri, Constants.ExchangeName, Constants.IntermediateTopic, stoppingToken);
+            await original.TryConnect(Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
+            await intermediate.TryConnect(Constants.ExchangeName, Constants.IntermediateTopic, stoppingToken);
 
             logger.LogInformation("Connected");
 

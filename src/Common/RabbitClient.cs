@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -15,6 +16,7 @@ namespace Common
     public class RabbitClient : IDisposable
     {
         private readonly ILogger<RabbitClient> logger;
+        private readonly IOptionsMonitor<RabbitMQOptions> clientOptionsMonitor;
 
         private IConnection? connection;
         private IModel? channel;
@@ -26,16 +28,19 @@ namespace Common
 
         public System.EventHandler<Message>? OnMessageReceived;
 
-        public RabbitClient(ILogger<RabbitClient> logger)
+        public RabbitClient(ILogger<RabbitClient> logger, IOptionsMonitor<RabbitMQOptions> clientOptionsMonitor)
         {
             this.logger = logger;
+            this.clientOptionsMonitor = clientOptionsMonitor;
         }
 
-        public void Connect(string uriString, string exchangeName, string routingKey)
+        public void Connect(string exchangeName, string routingKey)
         {
+            RabbitMQOptions clientOptions = clientOptionsMonitor.CurrentValue;
+
             ConnectionFactory factory = new ConnectionFactory
             {
-                Uri = new Uri(uriString)
+                Uri = new Uri(clientOptions.Uri)
             };
 
             this.exchangeName = exchangeName;
@@ -82,7 +87,7 @@ namespace Common
                                  consumer: consumer);
         }
 
-        public async Task TryConnect(string uriString, string exchangeName, string routingKey, CancellationToken stoppingToken)
+        public async Task TryConnect(string exchangeName, string routingKey, CancellationToken stoppingToken)
         {
             var random = new Random();
 
@@ -93,7 +98,7 @@ namespace Common
                 try
                 {
                     ++attempt;
-                    Connect(uriString, exchangeName, routingKey);
+                    Connect(exchangeName, routingKey);
                     break;
                 }
                 catch
@@ -102,6 +107,26 @@ namespace Common
                     await random.WaitForExponentialDelay(attempt - 1, stoppingToken);
                 }
             }
+        }
+
+        ///<summary>
+        /// Wait for RabbitMQ to start up
+        ///</summary>
+        public async Task WaitForRabbitMQ(CancellationToken cancellationToken = default)
+        {
+            logger.LogInformation("Waiting for RabbitMQ");
+
+            logger.LogInformation("Using RabbitMQOptions {@Options}", this.clientOptionsMonitor.CurrentValue);
+
+            RabbitMQOptions clientOptions = clientOptionsMonitor.CurrentValue;
+
+            await ProgramCommon.WaitForTcpConnection(
+                clientOptions.Host,
+                clientOptions.Port,
+                maxAttempts: 6,
+                cancellationToken);
+
+            logger.LogInformation("RabbitMQ should be up!");
         }
 
         public void SendMessage(string message)

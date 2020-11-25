@@ -1,4 +1,12 @@
-version: "3"
+version: "3.4"
+
+# Utilize extension fields https://docs.docker.com/compose/compose-file/#extension-fields
+# To pass through common environment variables to containers
+x-common-env-config: &common-env-config
+  RabbitMQ__Host:
+  RabbitMQ__Port:
+  RabbitMQ__Username: ${RabbitMQ__Username:-rabbit_user}
+  RabbitMQ__Password: ${RabbitMQ__Password:-rabbit_pass}
 
 services:
   original:
@@ -9,6 +17,10 @@ services:
       dockerfile: ./Dockerfile
       args:
         - TargetProject=Original
+
+    environment:
+      << : *common-env-config
+      OutFilePath: /app/shared_volume/message.txt
 
     networks:
       - backend
@@ -21,6 +33,8 @@ services:
       dockerfile: ./Dockerfile
       args:
         - TargetProject=Intermediate
+
+    environment: *common-env-config
 
     networks:
       - backend
@@ -38,7 +52,8 @@ services:
       - backend
 
     environment:
-      - OutFilePath=/app/shared_volume/message.txt
+      << : *common-env-config
+      OutFilePath: /app/shared_volume/message.txt
 
     volumes:
       - shared:/app/shared_volume
@@ -55,7 +70,8 @@ services:
         - TargetProject=HttpServer
 
     environment:
-      - OutFilePath=/app/shared_volume/message.txt
+      << : *common-env-config
+      OutFilePath: /app/shared_volume/message.txt
 
     volumes:
       - shared:/app/shared_volume
@@ -79,8 +95,8 @@ services:
     #     driver: none
 
     environment:
-      RABBITMQ_DEFAULT_USER: "rabbit_user"
-      RABBITMQ_DEFAULT_PASS: "rabbit_pass"
+      RABBITMQ_DEFAULT_USER: ${RabbitMQ__Username:-rabbit_user}
+      RABBITMQ_DEFAULT_PASS: ${RabbitMQ__Password:-rabbit_pass}
 
     networks:
       - backend

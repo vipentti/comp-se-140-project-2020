@@ -83,18 +83,6 @@ namespace Common
             Log.Information("Tcp connection to {Host}:{Port} was successful", host, port);
         }
 
-        ///<summary>
-        /// Wait for RabbitMQ to start up
-        ///</summary>
-        public static async Task WaitForRabbitMQ(CancellationToken stoppingToken = new CancellationToken())
-        {
-            Log.Information("Waiting for RabbitMQ");
-
-            await WaitForTcpConnection(Constants.RabbitHost, Constants.RabbitPort, maxAttempts: 6, stoppingToken);
-
-            Log.Information("RabbitMQ should be up!");
-        }
-
         public static void ConfigureSerilog()
         {
             var configBuilder = new ConfigurationBuilder();
@@ -127,6 +115,10 @@ namespace Common
                 {
                     services.AddTransient<RabbitClient>();
                     configureServices(services);
+
+                    var config = hostContext.Configuration;
+
+                    services.Configure<RabbitMQOptions>(config.GetSection("RabbitMQ"));
                 });
     }
 }

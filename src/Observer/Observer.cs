@@ -55,10 +55,9 @@ namespace Observer
 
             System.IO.File.WriteAllText(settings.OutFilePath, "");
 
-            await ProgramCommon.WaitForRabbitMQ(stoppingToken);
+            await client.WaitForRabbitMQ(stoppingToken);
 
             await client.TryConnect(
-                Constants.RabbitUri,
                 Constants.ExchangeName,
                 Constants.AllMyTopics,
                 stoppingToken);
