@@ -24,6 +24,18 @@ COPY ./tests ./tests
 RUN dotnet restore "./amqp.sln"
 RUN dotnet build "./amqp.sln" -c ${BUILD_CONFIG} --no-restore
 
+# Test runner target
+# Provides an additional entrypoint that can be specifically targeted
+# using --target testrunner when building the image
+FROM build as testrunner
+WORKDIR /src
+ARG BUILD_CONFIG
+ENV ENV_BUILD_CONFIG=$BUILD_CONFIG
+COPY ./DevOps/scripts/run-tests.ps1 ./DevOps/scripts/run-tests.ps1
+COPY ./DevOps/scripts/invoke-script.ps1 ./DevOps/scripts/invoke-script.ps1
+RUN chmod +x ./DevOps/scripts/*.ps1
+ENTRYPOINT ["./DevOps/scripts/run-tests.ps1"]
+
 FROM build as publish
 WORKDIR /src
 ARG BUILD_CONFIG
