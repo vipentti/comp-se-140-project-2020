@@ -5,8 +5,10 @@ services:
     hostname: original
     container_name: ex-5-amqp-original
     build:
-      context: ./src
-      dockerfile: ./Original/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - TargetProject=Original
 
     networks:
       - backend
@@ -15,8 +17,10 @@ services:
     hostname: intermediate
     container_name: ex-5-amqp-intermediate
     build:
-      context: ./src
-      dockerfile: ./Intermediate/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - TargetProject=Intermediate
 
     networks:
       - backend
@@ -25,8 +29,10 @@ services:
     hostname: observer
     container_name: ex-5-amqp-observer
     build:
-      context: ./src
-      dockerfile: ./Observer/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - TargetProject=Observer
 
     networks:
       - backend
@@ -43,8 +49,10 @@ services:
     ports:
         - "${HTTP_SERVER_PORT:-8080}:80"
     build:
-      context: ./src
-      dockerfile: ./HttpServer/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - TargetProject=HttpServer
 
     environment:
       - OutFilePath=/app/shared_volume/message.txt

@@ -2,17 +2,17 @@
 **/bin/
 **/obj/
 **/out/
+**/testresults
 **/.git
 **/.shared_volume
 **/.vs
 **/.vscode
+**/.env*
 
 # files
 Dockerfile*
 docker-compose*.yml
 **/*.trx
 **/*.md
-**/*.ps1
 **/*.pdf
 **/*.cmd
-**/*.sh
