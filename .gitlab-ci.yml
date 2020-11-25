@@ -15,6 +15,8 @@ services:
 before_script:
   - docker info
   - docker-compose version
+  - ls -la ./DevOps/scripts
+  # - docker run --name debpwsh --rm mcr.microsoft.com/powershell:7.1.0-debian-buster-slim pwsh -Version
 
 build:
   stage: build
@@ -25,6 +27,13 @@ test:
   stage: test
   script:
     - echo "Tests will be run once they are implemented..."
+
+e2e:
+  stage: test
+  script:
+    - 'export NAME_PREFIX=e2e-test'
+    - ./DevOps/scripts/run-docker-tests.sh ./Dockerfile .
+    - echo "E2E tests will be run once they are implemented..."
 
 deploy:
   stage: deploy

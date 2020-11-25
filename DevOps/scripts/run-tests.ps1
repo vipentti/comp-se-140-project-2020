@@ -15,7 +15,7 @@ param (
 
     [Parameter()]
     [string]
-    $Filter = "",
+    $Filter = "$($env:TEST_FILTER)",
 
     [Parameter()]
     [string]
