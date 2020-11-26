@@ -42,7 +42,7 @@ namespace Observer
         {
             logger.LogInformation("Received message {@Message}", message);
 
-            string output = $"{DateTime.UtcNow:o} Topic {message.Topic}: {message.Content}";
+            string output = $"{DateTime.UtcNow.ToISO8601()} Topic {message.Topic}: {message.Content}";
 
             logger.LogInformation("writing to {path}: '{output}'", settings.OutFilePath, output);
 

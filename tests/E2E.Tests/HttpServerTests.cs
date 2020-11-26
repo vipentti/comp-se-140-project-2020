@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using FluentAssertions;
+using Common;
 
 namespace E2E.Tests
 {
@@ -107,6 +108,78 @@ namespace E2E.Tests
             // We don't care about the timestamps in this case
             lines[0].Should().Match("* Topic my.o: MSG_1");
             lines[1].Should().Match("* Topic my.i: Got MSG_1");
+        }
+
+        [Fact]
+        public async Task Test_HttpServer_Messages_Contain_Correctly_Formatted_Timestamp()
+        {
+            // Arrange
+
+            // Act
+            string[] messages = await GetMessages(acceptableNumberOfMessages: 1);
+
+            // Assert
+            messages.Should().HaveCountGreaterOrEqualTo(1);
+
+            // Messages should be in the following format
+            // 2020-11-26T11:30:45.860Z Topic my.o: MSG_1
+            string[] parts = messages[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            parts.Should().HaveCountGreaterOrEqualTo(1);
+
+            // Datetime should be convertible
+            DateTime? messageDate = parts[0].FromISO8601();
+
+            messageDate.Should().NotBeNull();
+        }
+
+        private async Task<string[]> GetMessages(int acceptableNumberOfMessages)
+        {
+            async Task<string> makeRequest() {
+                using var request = new HttpRequestMessage(HttpMethod.Get, "");
+
+                var response = await SendRequest(request);
+                response.Should().NotBeNull();
+                response.IsSuccessStatusCode.Should().BeTrue();
+
+                return await response.Content.ReadAsStringAsync();
+            }
+
+            string content = await makeRequest();
+
+            const int MAX_ATTEMPTS = 10;
+            int attempt = 0;
+
+            var random = new Random();
+
+            // If the server returns OK but empty content, it may simply mean
+            // that the messages  have not been sent yet, so we want to give
+            // some time for the messages to be sent before giving up
+            while (string.IsNullOrEmpty(content) && attempt < MAX_ATTEMPTS) {
+                ++attempt;
+
+                int randomDelay = random.Next(100, 300);
+                await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
+                content = await makeRequest();
+
+                // Ensure lines are normalized
+                var maybeLines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+                // If we have some content but not the full data
+                // try once more to get the data after a delay
+                // This should reduce the likelyhood that we read the content
+                // just before the second message was added
+                if (!string.IsNullOrEmpty(content) && maybeLines.Length < acceptableNumberOfMessages) {
+                    randomDelay = random.Next(100, 300);
+                    await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
+                    content = await makeRequest();
+                    break;
+                }
+            }
+
+            content.Should().NotBeNullOrEmpty(because: $"Failed after {attempt} attempt(s).");
+
+            return content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
         }
 
         private async Task<HttpResponseMessage> SendRequest(HttpRequestMessage request)
