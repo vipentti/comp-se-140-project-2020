@@ -57,51 +57,7 @@ namespace E2E.Tests
         [Fact]
         public async Task Test_HttpServer_Returns_Messages()
         {
-            async Task<string> makeRequest() {
-                using var request = new HttpRequestMessage(HttpMethod.Get, "");
-
-                var response = await SendRequest(request);
-                response.Should().NotBeNull();
-                response.IsSuccessStatusCode.Should().BeTrue();
-
-                return await response.Content.ReadAsStringAsync();
-            }
-
-            string content = await makeRequest();
-
-            const int MAX_ATTEMPTS = 10;
-            int attempt = 0;
-
-            var random = new Random();
-
-            // If the server returns OK but empty content, it may simply mean
-            // that the messages  have not been sent yet, so we want to give
-            // some time for the messages to be sent before giving up
-            while (string.IsNullOrEmpty(content) && attempt < MAX_ATTEMPTS) {
-                ++attempt;
-
-                int randomDelay = random.Next(100, 300);
-                await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
-                content = await makeRequest();
-
-                // Ensure lines are normalized
-                var maybeLines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                // If we have some content but not the full data
-                // try once more to get the data after a delay
-                // This should reduce the likelyhood that we read the content
-                // just before the second message was added
-                if (!string.IsNullOrEmpty(content) && maybeLines.Length < 2) {
-                    randomDelay = random.Next(100, 300);
-                    await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
-                    content = await makeRequest();
-                    break;
-                }
-            }
-
-            content.Should().NotBeNullOrEmpty(because: $"Failed after {attempt} attempt(s).");
-
-            // Ensure lines are normalized
-            var lines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = await GetMessages(2);
 
             lines.Should().HaveCountGreaterOrEqualTo(2);
 
@@ -145,37 +101,36 @@ namespace E2E.Tests
                 return await response.Content.ReadAsStringAsync();
             }
 
-            string content = await makeRequest();
-
             const int MAX_ATTEMPTS = 10;
             int attempt = 0;
 
             var random = new Random();
 
+            string content;
+
             // If the server returns OK but empty content, it may simply mean
             // that the messages  have not been sent yet, so we want to give
             // some time for the messages to be sent before giving up
-            while (string.IsNullOrEmpty(content) && attempt < MAX_ATTEMPTS) {
+            do {
                 ++attempt;
 
-                int randomDelay = random.Next(100, 300);
-                await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
                 content = await makeRequest();
-
-                // Ensure lines are normalized
-                var maybeLines = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
                 // If we have some content but not the full data
                 // try once more to get the data after a delay
                 // This should reduce the likelyhood that we read the content
-                // just before the second message was added
-                if (!string.IsNullOrEmpty(content) && maybeLines.Length < acceptableNumberOfMessages) {
-                    randomDelay = random.Next(100, 300);
-                    await Task.Delay(TimeSpan.FromMilliseconds(Common.Constants.DelayBetweenMessages + randomDelay));
-                    content = await makeRequest();
-                    break;
+                // just before the next message was added
+                if (!string.IsNullOrEmpty(content)) {
+                    var messages = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    if (messages.Length >= acceptableNumberOfMessages) {
+                        break;
+                    }
                 }
-            }
+
+                int randomDelay = random.Next(100, 300);
+                await Task.Delay(TimeSpan.FromMilliseconds(Constants.DelayBetweenMessages + randomDelay));
+
+            } while (attempt < MAX_ATTEMPTS);
 
             content.Should().NotBeNullOrEmpty(because: $"Failed after {attempt} attempt(s).");
 
