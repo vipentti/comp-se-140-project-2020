@@ -8,6 +8,9 @@ x-common-env-config: &common-env-config
   RabbitMQ__Username: ${RabbitMQ__Username:-rabbit_user}
   RabbitMQ__Password: ${RabbitMQ__Password:-rabbit_pass}
 
+x-common-service-properties: &common-service-properties
+  command: ["./wait-for-tcp.sh", "${RabbitMQ__Host:-rabbitmq}", "${RabbitMQ__Port:-5672}", "--", "./entry.sh"]
+
 services:
   original:
     hostname: original
@@ -16,6 +19,8 @@ services:
       dockerfile: ./Dockerfile
       args:
         - TargetProject=Original
+
+    << : *common-service-properties
 
     environment:
       << : *common-env-config
@@ -32,6 +37,8 @@ services:
       args:
         - TargetProject=Intermediate
 
+    << : *common-service-properties
+
     environment: *common-env-config
 
     networks:
@@ -44,6 +51,8 @@ services:
       dockerfile: ./Dockerfile
       args:
         - TargetProject=Observer
+
+    << : *common-service-properties
 
     networks:
       - backend

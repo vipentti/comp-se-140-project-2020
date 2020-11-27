@@ -13,7 +13,7 @@ attempt=0
 max_attempts=30
 
 until docker logs --tail 50 "${container_name}" 2>&1 | grep -q "${log_message}" ; do
-    ((attempt=attempt+1))
+    attempt=$((attempt+1))
     if [ $attempt -gt $max_attempts ] ; then
         >&2 echo "Container '${container_name}' is not up after $attempt attempt(s). Exiting."
         exit 1
@@ -23,4 +23,4 @@ until docker logs --tail 50 "${container_name}" 2>&1 | grep -q "${log_message}" 
     sleep 1
 done
 
->&2 echo "'${container_name}' is up"
+>&2 echo "'${container_name}' is up after $attempt attempt(s)"

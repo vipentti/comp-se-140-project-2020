@@ -4,6 +4,8 @@ ARG TargetProject
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim as runtime
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+
 # Install tini https://github.com/krallin/tini
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
@@ -54,6 +56,9 @@ COPY --from=publish /app/publish .
 # This utilizes the build time argument TargetProjeect
 RUN echo "#!/bin/sh\nexec dotnet ${TargetProject}.dll" > entry.sh \
     && chmod +x ./entry.sh
+
+COPY ./DevOps/scripts/wait-for-tcp.sh ./
+RUN chmod +x ./wait-for-tcp.sh
 
 # NOTE: Using CMD here since the entrypoint using tini
 # is defined in the runtime base image

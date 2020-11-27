@@ -65,6 +65,7 @@ e2e:
   after_script:
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" original
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" observer
+    - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" httpserver
     - docker-compose --project-name $E2E_PROJECT_NAME down
 
   artifacts:
