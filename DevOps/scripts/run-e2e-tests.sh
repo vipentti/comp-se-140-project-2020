@@ -1,8 +1,7 @@
 #!/bin/sh
 
-E2E_PROJECT_NAME=e2e-test
+E2E_PROJECT_NAME="${E2E_PROJECT_NAME:-e2e-test}"
 ENV_FILE="${ENV_FILE:-.env.e2e}"
-
 
 docker-compose --project-name "${E2E_PROJECT_NAME}" down
 
@@ -13,8 +12,9 @@ if [ ! $? -eq 0 ]; then
     exit 1;
 fi
 
-
 export EXTRA_RUN_ARGS="--network ${E2E_PROJECT_NAME}_backend"
+
+mkdir -pv ./testresults/e2e
 
 ./DevOps/scripts/run-docker-tests.sh ./Dockerfile . ${ENV_FILE} ./testresults/e2e
 
