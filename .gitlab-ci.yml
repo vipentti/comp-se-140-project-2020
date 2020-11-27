@@ -4,6 +4,7 @@ image: docker/compose:1.27.4
 variables:
   E2E_PROJECT_NAME: e2e-test
   DEFAULT_PROJECT_NAME: ex-5-amqp
+  tag: "latest"
 
 stages:
   - build
@@ -20,8 +21,7 @@ before_script:
 build:
   stage: build
   script:
-    - docker-compose --project-name $E2E_PROJECT_NAME build
-    - docker-compose --project-name $DEFAULT_PROJECT_NAME build
+    - ./DevOps/scripts/build-images.sh --tag "${tag}"
 
 test:
   stage: test
@@ -59,8 +59,8 @@ e2e:
 
   script:
     - ./DevOps/scripts/create-test-env-file.sh ${ENV_FILE}
-    - docker-compose --project-name $E2E_PROJECT_NAME down
-    - docker-compose --project-name $E2E_PROJECT_NAME up -d
+    - docker-compose --project-name $E2E_PROJECT_NAME down -v
+    - docker-compose --project-name $E2E_PROJECT_NAME up -d --no-build
     - docker-compose --project-name $E2E_PROJECT_NAME ps
     - 'export EXTRA_RUN_ARGS="--network ${E2E_PROJECT_NAME}_backend"'
     - ./DevOps/scripts/run-docker-tests.sh ./Dockerfile . ${ENV_FILE} ./testresults
@@ -69,7 +69,7 @@ e2e:
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" original
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" observer
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" httpserver
-    - docker-compose --project-name $E2E_PROJECT_NAME down
+    - docker-compose --project-name $E2E_PROJECT_NAME down -v
 
   artifacts:
     when: always
@@ -84,7 +84,7 @@ deploy:
   script:
     # Ensure we re-start the containers
     - docker-compose --project-name $DEFAULT_PROJECT_NAME down
-    - docker-compose --project-name $DEFAULT_PROJECT_NAME up -d
+    - docker-compose --project-name $DEFAULT_PROJECT_NAME up -d --no-build
     - docker-compose --project-name $DEFAULT_PROJECT_NAME ps
 
 

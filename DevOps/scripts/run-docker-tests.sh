@@ -4,13 +4,14 @@ Dockerfile="${1:?Dockerfile}"
 BuildContext="${2?:BuildContext}"
 EnvFile="${3?:EnvFile}"
 TestResultsPath="${4:-$(pwd)/testresults}"
-Tag="${5:-amqptest:latest}"
+Tag="${5:-builder:latest}"
 
-docker build \
-    --target "testrunner" \
-    -t "${Tag}" \
-    -f "${Dockerfile}" \
-    $BuildContext
+script_dir=$(dirname $(readlink -f $0))
+
+/bin/sh "${script_dir}/build-docker.sh" \
+    --file "Dockerfile" \
+    --tag "builder:${tag}" \
+    --target "testrunner"
 
 if [ ! $? -eq 0 ]; then
     echo "Building containers failed. Exiting."
