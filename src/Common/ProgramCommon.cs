@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
+using System.IO.Abstractions;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -115,6 +116,10 @@ namespace Common
                 {
                     services.AddTransient<RabbitClient>();
                     services.AddTransient<IRabbitClient, RabbitClient>();
+
+                    // Register FileSystem
+                    services.AddSingleton<IFileSystem, FileSystem>();
+
                     configureServices(services);
 
                     var config = hostContext.Configuration;

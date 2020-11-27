@@ -41,7 +41,7 @@ namespace Intermediate.Tests
             _originalMock.Raise(it => it.OnMessageReceived += null, null, testMessage);
 
             // The handler waits before sending
-            await Task.Delay(Constants.IntermediateDelay * 2);
+            await Task.Delay(Constants.IntermediateDelay + 100);
 
             // Assert
             _originalMock.VerifyAdd(it => it.OnMessageReceived += It.IsAny<EventHandler<Message>>());

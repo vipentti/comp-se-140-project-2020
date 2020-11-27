@@ -6,24 +6,27 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO.Abstractions;
 
 namespace Observer
 {
-    class Observer : BackgroundService
+    public class Observer : BackgroundService
     {
         private readonly ILogger<Observer> logger;
-        private readonly RabbitClient client;
+        private readonly IRabbitClient client;
         private readonly Settings settings;
+        private readonly IFileSystem fileSystem;
 
         public class Settings
         {
             public string OutFilePath { get; set; } = "";
         }
 
-        public Observer(IConfiguration config, RabbitClient client, ILogger<Observer> logger)
+        public Observer(IConfiguration config, IRabbitClient client, IFileSystem fileSystem, ILogger<Observer> logger)
         {
             this.logger = logger;
             this.client = client;
+            this.fileSystem = fileSystem;
 
             client.OnMessageReceived += OnMessageReceived;
 
@@ -46,7 +49,7 @@ namespace Observer
 
             logger.LogInformation("writing to {path}: '{output}'", settings.OutFilePath, output);
 
-            System.IO.File.AppendAllText(settings.OutFilePath, output + Environment.NewLine);
+            fileSystem.File.AppendAllText(settings.OutFilePath, output + Environment.NewLine);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
