@@ -1,5 +1,6 @@
 using APIGateway.Features.Messages;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,11 @@ namespace APIGateway
             {
                 var handler = context.RequestServices.GetRequiredService<MessagesHandler>();
                 await handler.Handle(context);
+            });
+
+            endpoints.MapGet("/state", async context =>
+            {
+                await context.Response.WriteAsync("");
             });
         }
     }
