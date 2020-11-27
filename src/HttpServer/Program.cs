@@ -32,9 +32,14 @@ namespace HttpServer
 
             var settings = config.Get<Settings>();
 
-            var content = await fileSystem.File.ReadAllTextAsync(settings.OutFilePath, System.Text.Encoding.UTF8);
+            string content = "";
 
-            logger.LogInformation("Read from {path}: '{content}'", settings.OutFilePath, content.Replace(Environment.NewLine, "\\n"));
+            try {
+                content = await fileSystem.File.ReadAllTextAsync(settings.OutFilePath, System.Text.Encoding.UTF8);
+                logger.LogInformation("Read from {path}: '{content}'", settings.OutFilePath, content.Replace(Environment.NewLine, "\\n"));
+            } catch (System.IO.FileNotFoundException ex) {
+                logger.LogWarning("File {path} does not exist.\n{@Exception}", settings.OutFilePath, ex);
+            }
 
             await httpContext.Response.WriteAsync(content);
         }
