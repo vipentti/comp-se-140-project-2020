@@ -69,5 +69,22 @@ namespace HttpServer.Tests
 
             content.Should().Be("test content");
         }
+
+        [Fact]
+        public async Task ServerMiddleware_Handles_FileNotFound()
+        {
+            // Arrange
+            _fileMock.Setup(it => it.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<System.Text.Encoding>(), It.IsAny<CancellationToken>()))
+                .Throws<System.IO.FileNotFoundException>();
+
+            IHost host = await _hostBuilder.StartAsync();
+
+            // Act
+            var response = await host.GetTestClient().GetAsync("/");
+
+            // Assert
+            response.Should().NotBeNull();
+            response.IsSuccessStatusCode.Should().BeTrue();
+        }
     }
 }
