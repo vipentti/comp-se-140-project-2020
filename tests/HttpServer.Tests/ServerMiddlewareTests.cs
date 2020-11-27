@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
@@ -65,7 +64,7 @@ namespace HttpServer.Tests
             response.Should().NotBeNull();
             response.IsSuccessStatusCode.Should().BeTrue();
 
-            _fileMock.Verify(it => it.ReadAllTextAsync(It.IsAny<string>(),It.IsAny<System.Text.Encoding>(), It.IsAny<CancellationToken>()), Times.Once);
+            _fileMock.Verify(it => it.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<System.Text.Encoding>(), It.IsAny<CancellationToken>()), Times.Once);
 
             var content = await response.Content.ReadAsStringAsync();
 

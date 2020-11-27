@@ -1,9 +1,7 @@
 using System;
 using Xunit;
 using Moq;
-using FluentAssertions;
 using Common;
-using System.Threading.Tasks;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +20,9 @@ namespace Observer.Tests
         {
             var configBuilder = new ConfigurationBuilder();
 
-            Common.ProgramCommon.ConfigureApplication(configBuilder);
+            ProgramCommon.ConfigureApplication(configBuilder);
 
             _configuration = configBuilder.Build();
-
 
             _loggerMock = new Mock<ILogger<Observer>>();
             _clientMock = TestUtils.MockUtils.CreateMockClient();
@@ -45,7 +42,8 @@ namespace Observer.Tests
                 _loggerMock.Object
             );
 
-            var testMessage = new Message {
+            var testMessage = new Message
+            {
                 Topic = "test-topic",
                 Content = "Test message"
             };

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,18 +14,21 @@ namespace Intermediate
         private readonly ILogger<Intermediate> logger;
         private readonly IRabbitClient original;
         private readonly IRabbitClient intermediate;
+        private readonly CommonOptions options;
 
-        public Intermediate(IRabbitClient original, IRabbitClient intermediate, ILogger<Intermediate> logger)
+        public Intermediate(IRabbitClient original, IRabbitClient intermediate, ILogger<Intermediate> logger, IOptions<CommonOptions> options)
         {
             this.original = original;
             this.intermediate = intermediate;
 
-            if (ReferenceEquals(this.intermediate, this.original)) {
+            if (ReferenceEquals(this.intermediate, this.original))
+            {
                 throw new ArgumentException($"{nameof(original)} and {nameof(intermediate)} cannot refer to the same object");
             }
 
             this.logger = logger;
             this.original.OnMessageReceived += OnOriginalMessage;
+            this.options = options.Value;
         }
 
         public static async Task Main(string[] args)
@@ -39,7 +43,7 @@ namespace Intermediate
         {
             logger.LogInformation("Received message {@Message} from original", message);
 
-            await Task.Delay(Constants.IntermediateDelay);
+            await Task.Delay(options.IntermediateDelay);
 
             intermediate.SendMessage($"Got {message.Content}");
         }
@@ -48,17 +52,17 @@ namespace Intermediate
         {
             await original.WaitForRabbitMQ(stoppingToken);
 
-            await original.TryConnect(Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
-            await intermediate.TryConnect(Constants.ExchangeName, Constants.IntermediateTopic, stoppingToken);
+            await original.TryConnect(options.ExchangeName, options.OriginalTopic, stoppingToken);
+            await intermediate.TryConnect(options.ExchangeName, options.IntermediateTopic, stoppingToken);
 
             logger.LogInformation("Connected");
 
-            await Task.Delay(Constants.DelayAfterConnect, stoppingToken);
+            await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
             // keep the service running
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(Constants.LoopDelay, stoppingToken);
+                await Task.Delay(options.LoopDelay, stoppingToken);
             }
 
             logger.LogInformation("Finished");

@@ -24,14 +24,18 @@ namespace Intermediate.Tests
         [Fact]
         public async Task Intermediate_Sends_Message_When_OnMessageReceived_IsRaised()
         {
+            var options = TestUtils.Utils.GetTestOptions();
+
             // Arrange
             var service = new Intermediate(
                 _originalMock.Object,
                 _intermediateMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                options
             );
 
-            var testMessage = new Message {
+            var testMessage = new Message
+            {
                 Content = "Test"
             };
 
@@ -41,7 +45,7 @@ namespace Intermediate.Tests
             _originalMock.Raise(it => it.OnMessageReceived += null, null, testMessage);
 
             // The handler waits before sending
-            await Task.Delay(Constants.IntermediateDelay + 100);
+            await Task.Delay(options.Value.IntermediateDelay + 100);
 
             // Assert
             _originalMock.VerifyAdd(it => it.OnMessageReceived += It.IsAny<EventHandler<Message>>());
@@ -54,7 +58,8 @@ namespace Intermediate.Tests
             var act = FluentActions.Invoking(() => new Intermediate(
                 _originalMock.Object,
                 _originalMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                TestUtils.Utils.GetTestOptions()
             ));
 
             act.Should().Throw<ArgumentException>().WithMessage("*cannot refer to the same object*");
