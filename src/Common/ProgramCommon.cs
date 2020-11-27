@@ -114,6 +114,7 @@ namespace Common
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<RabbitClient>();
+                    services.AddTransient<IRabbitClient, RabbitClient>();
                     configureServices(services);
 
                     var config = hostContext.Configuration;

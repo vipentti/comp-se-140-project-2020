@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Original
 {
-    internal class Original : BackgroundService
+    public class Original : BackgroundService
     {
         public static async Task Main(string[] args)
         {
@@ -43,9 +43,9 @@ namespace Original
         }
 
         private readonly ILogger<Original> logger;
-        private readonly RabbitClient rabbitClient;
+        private readonly IRabbitClient rabbitClient;
 
-        public Original(RabbitClient rabbit, ILogger<Original> logger)
+        public Original(IRabbitClient rabbit, ILogger<Original> logger)
         {
             this.rabbitClient = rabbit;
             this.logger = logger;

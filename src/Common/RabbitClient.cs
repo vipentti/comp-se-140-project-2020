@@ -10,10 +10,18 @@ using RabbitMQ.Client.Events;
 
 namespace Common
 {
+    public interface IRabbitClient
+    {
+        event EventHandler<Message>? OnMessageReceived;
+        void SendMessage(string message);
+        Task TryConnect(string exchangeName, string routingKey, CancellationToken stoppingToken);
+        Task WaitForRabbitMQ(CancellationToken cancellationToken = default);
+    }
+
     ///<summary>
     /// Wraps Rabbit MQ with some helper methods
     ///</summary>
-    public class RabbitClient : IDisposable
+    public class RabbitClient : IDisposable, IRabbitClient
     {
         private readonly ILogger<RabbitClient> logger;
         private readonly IOptionsMonitor<RabbitMQOptions> clientOptionsMonitor;
@@ -26,7 +34,7 @@ namespace Common
 
         public bool IsConnected { get; private set; }
 
-        public System.EventHandler<Message>? OnMessageReceived;
+        public event EventHandler<Message>? OnMessageReceived;
 
         public RabbitClient(ILogger<RabbitClient> logger, IOptionsMonitor<RabbitMQOptions> clientOptionsMonitor)
         {
