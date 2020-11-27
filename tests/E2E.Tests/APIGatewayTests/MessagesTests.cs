@@ -21,7 +21,7 @@ namespace E2E.Tests.APIGatewayTests
             options = Configuration.Get<ApiGatewayOptions>();
         }
 
-        [Fact]
+        [E2EFact]
         public async Task Messages_Returns_OK_Response()
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, options.ApiGatewayUrl);

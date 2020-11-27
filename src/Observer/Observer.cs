@@ -7,6 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Observer
 {
@@ -16,13 +17,14 @@ namespace Observer
         private readonly IRabbitClient client;
         private readonly Settings settings;
         private readonly IFileSystem fileSystem;
+        private readonly CommonOptions options;
 
         public class Settings
         {
             public string OutFilePath { get; set; } = "";
         }
 
-        public Observer(IConfiguration config, IRabbitClient client, IFileSystem fileSystem, ILogger<Observer> logger)
+        public Observer(IConfiguration config, IRabbitClient client, IFileSystem fileSystem, ILogger<Observer> logger, IOptions<CommonOptions> options)
         {
             this.logger = logger;
             this.client = client;
@@ -31,9 +33,10 @@ namespace Observer
             client.OnMessageReceived += OnMessageReceived;
 
             settings = config.Get<Settings>();
+            this.options = options.Value;
         }
 
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             await ProgramCommon.Execute(args, services =>
             {
@@ -56,23 +59,23 @@ namespace Observer
         {
             logger.LogInformation("Clearing file {path}", settings.OutFilePath);
 
-            System.IO.File.WriteAllText(settings.OutFilePath, "");
+            fileSystem.File.WriteAllText(settings.OutFilePath, "");
 
             await client.WaitForRabbitMQ(stoppingToken);
 
             await client.TryConnect(
-                Constants.ExchangeName,
-                Constants.AllMyTopics,
+                options.ExchangeName,
+                options.AllMyTopics,
                 stoppingToken);
 
             logger.LogInformation("Connected");
 
-            await Task.Delay(Constants.DelayAfterConnect, stoppingToken);
+            await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
             // keep the service running
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(Constants.LoopDelay, stoppingToken);
+                await Task.Delay(options.LoopDelay, stoppingToken);
             }
 
             logger.LogInformation("Finished");

@@ -1,4 +1,3 @@
-
 using System;
 using System.Text;
 using System.Threading;
@@ -13,8 +12,11 @@ namespace Common
     public interface IRabbitClient
     {
         event EventHandler<Message>? OnMessageReceived;
+
         void SendMessage(string message);
+
         Task TryConnect(string exchangeName, string routingKey, CancellationToken stoppingToken);
+
         Task WaitForRabbitMQ(CancellationToken cancellationToken = default);
     }
 
@@ -111,7 +113,6 @@ namespace Common
                 }
                 catch
                 {
-                    logger.LogInformation("Waiting for {Duration}", Constants.DelayBetweenConnectionAttempts);
                     await random.WaitForExponentialDelay(attempt - 1, stoppingToken);
                 }
             }

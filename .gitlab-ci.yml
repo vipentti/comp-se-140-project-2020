@@ -53,6 +53,7 @@ e2e:
     # Include only E2E tests
     TEST_FILTER: "FullyQualifiedName~E2E"
     ENV_FILE: ".env.e2e"
+    E2E: "true"
 
   script:
     - ./DevOps/scripts/create-test-env-file.sh ${ENV_FILE}

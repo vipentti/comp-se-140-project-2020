@@ -3,15 +3,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 using FluentAssertions;
 using Common;
 
 namespace E2E.Tests
 {
     /// <summary>
-    /// Provides end-to-end testing for the HttpServer.
-    /// This requires that the HttpServer is running
+    /// Provides end-to-end testing for the HttpServer. This requires that the HttpServer is running
     /// at the url provided in HttpServerUrl configuration variable.
     /// </summary>
     public class HttpServerTests
@@ -44,7 +42,7 @@ namespace E2E.Tests
             scopeFactory = serviceCollection.BuildServiceProvider().GetService<IServiceScopeFactory>();
         }
 
-        [Fact]
+        [E2EFact]
         public async Task Test_HttpServer_Returns_OK_Response()
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -54,7 +52,7 @@ namespace E2E.Tests
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         }
 
-        [Fact]
+        [E2EFact]
         public async Task Test_HttpServer_Returns_Messages()
         {
             string[] lines = await GetMessages(2);
@@ -66,7 +64,7 @@ namespace E2E.Tests
             lines[1].Should().Match("* Topic my.i: Got MSG_1");
         }
 
-        [Fact]
+        [E2EFact]
         public async Task Test_HttpServer_Messages_Contain_Correctly_Formatted_Timestamp()
         {
             // Arrange
@@ -77,8 +75,7 @@ namespace E2E.Tests
             // Assert
             messages.Should().HaveCountGreaterOrEqualTo(1);
 
-            // Messages should be in the following format
-            // 2020-11-26T11:30:45.860Z Topic my.o: MSG_1
+            // Messages should be in the following format 2020-11-26T11:30:45.860Z Topic my.o: MSG_1
             string[] parts = messages[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             parts.Should().HaveCountGreaterOrEqualTo(1);
@@ -91,7 +88,8 @@ namespace E2E.Tests
 
         private async Task<string[]> GetMessages(int acceptableNumberOfMessages)
         {
-            async Task<string> makeRequest() {
+            async Task<string> makeRequest()
+            {
                 using var request = new HttpRequestMessage(HttpMethod.Get, "");
 
                 var response = await SendRequest(request);
@@ -108,28 +106,31 @@ namespace E2E.Tests
 
             string content;
 
-            // If the server returns OK but empty content, it may simply mean
-            // that the messages  have not been sent yet, so we want to give
-            // some time for the messages to be sent before giving up
-            do {
+            var defaultOptions = new CommonOptions();
+
+            // If the server returns OK but empty content, it may simply mean that the messages have
+            // not been sent yet, so we want to give some time for the messages to be sent before
+            // giving up
+            do
+            {
                 ++attempt;
 
                 content = await makeRequest();
 
-                // If we have some content but not the full data
-                // try once more to get the data after a delay
-                // This should reduce the likelyhood that we read the content
-                // just before the next message was added
-                if (!string.IsNullOrEmpty(content)) {
+                // If we have some content but not the full data try once more to get the data after
+                // a delay This should reduce the likelyhood that we read the content just before
+                // the next message was added
+                if (!string.IsNullOrEmpty(content))
+                {
                     var messages = content.Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                    if (messages.Length >= acceptableNumberOfMessages) {
+                    if (messages.Length >= acceptableNumberOfMessages)
+                    {
                         break;
                     }
                 }
 
                 int randomDelay = random.Next(100, 300);
-                await Task.Delay(TimeSpan.FromMilliseconds(Constants.DelayBetweenMessages + randomDelay));
-
+                await Task.Delay(TimeSpan.FromMilliseconds(defaultOptions.DelayBetweenMessages + randomDelay));
             } while (attempt < MAX_ATTEMPTS);
 
             content.Should().NotBeNullOrEmpty(because: $"Failed after {attempt} attempt(s).");
