@@ -16,6 +16,7 @@ namespace APIGateway.Tests
 
         [Theory]
         [InlineData("/messages")]
+        [InlineData("/state")]
         public async Task Get_Endpoint_Returns_Success_StatusCode(string endpoint)
         {
             // Arrange
