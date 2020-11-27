@@ -6,20 +6,21 @@ using Moq;
 using APIGateway.Features.Messages;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
-namespace APIGateway.Tests
+namespace APIGateway.Tests.Features.Messages
 {
     public class MessagesTests : IClassFixture<APIGatewayAppFactory>
     {
         private readonly APIGatewayAppFactory factory;
         private readonly string endpoint = "/messages";
-
         private readonly Mock<IMessageService> messageServiceMock;
 
         public MessagesTests(APIGatewayAppFactory factory)
         {
             this.factory = factory;
             this.messageServiceMock = new Mock<IMessageService>(MockBehavior.Strict);
+            this.messageServiceMock.Setup(it => it.GetMessages()).ReturnsAsync(Enumerable.Empty<string>());
         }
 
         [Fact]

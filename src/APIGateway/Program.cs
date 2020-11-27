@@ -1,5 +1,4 @@
 ﻿using Common;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -16,7 +15,7 @@ namespace APIGateway
 
             try
             {
-                var host = CreateWebHostBuilder(args).Build();
+                var host = CreateHostBuilder(args).Build();
 
                 await host.RunAsync();
             }
@@ -26,11 +25,15 @@ namespace APIGateway
             }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .UseKestrel()
                 .ConfigureAppConfiguration(ProgramCommon.ConfigureApplication)
-                .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(builder => {
+                    builder
+                        .UseSerilog()
+                        .UseKestrel()
+                        .UseStartup<Startup>();
+                });
     }
 }
