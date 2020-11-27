@@ -49,7 +49,9 @@ e2e:
     RABBITMQ_PUBLIC_PORT: 5777
     RABBITMQ_MANAGEMENT_PUBLIC_PORT: 15677
     HTTP_SERVER_PORT: 9512
+    APIGATEWAY_PORT: 9513
     HttpServerUrl: "http://httpserver"
+    ApiGatewayUrl: "http://apigateway"
     # Include only E2E tests
     TEST_FILTER: "FullyQualifiedName~E2E"
     ENV_FILE: ".env.e2e"

@@ -23,7 +23,7 @@ namespace E2E.Tests.APIGatewayTests
         [E2EFact]
         public async Task Messages_Returns_OK_Response()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, options.ApiGatewayUrl);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{options.ApiGatewayUrl}/messages");
 
             using HttpResponseMessage response = await SendRequest(request);
 
