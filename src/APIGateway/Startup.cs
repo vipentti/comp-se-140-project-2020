@@ -32,17 +32,13 @@ namespace APIGateway
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/messages", async context =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<MessagesHandler>();
-                    await handler.Handle(context);
-                });
+                endpoints.UseApplicationRoutes(env);
             });
         }
     }
