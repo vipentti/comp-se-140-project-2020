@@ -13,9 +13,11 @@ namespace APIGateway.Features.Messages
             this.httpClient = httpClient;
         }
 
-        public Task<IEnumerable<string>> GetMessages()
+        public async Task<IEnumerable<string>> GetMessages()
         {
-            throw new System.NotImplementedException();
+            var messageString = await httpClient.GetStringAsync("/messages");
+
+            return messageString.Split(System.Environment.NewLine);
         }
     }
 }
