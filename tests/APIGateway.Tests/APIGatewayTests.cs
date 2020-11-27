@@ -5,11 +5,11 @@ using FluentAssertions;
 
 namespace APIGateway.Tests
 {
-    public class APIGatewayTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class APIGatewayTests : IClassFixture<APIGatewayAppFactory>
     {
-        private readonly WebApplicationFactory<Startup> factory;
+        private readonly APIGatewayAppFactory factory;
 
-        public APIGatewayTests(WebApplicationFactory<Startup> factory)
+        public APIGatewayTests(APIGatewayAppFactory factory)
         {
             this.factory = factory;
         }
