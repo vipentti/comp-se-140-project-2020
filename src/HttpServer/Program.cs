@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.AspNetCore;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace HttpServer
@@ -17,20 +19,20 @@ namespace HttpServer
         public string OutFilePath { get; set; } = "";
     }
 
-    class ServerMiddleware
+    public class ServerMiddleware
     {
         public ServerMiddleware(RequestDelegate _)
         {
         }
 
-        public async Task Invoke(HttpContext httpContext, ILogger<ServerMiddleware> logger, IConfiguration config)
+        public async Task Invoke(HttpContext httpContext, IFileSystem fileSystem, ILogger<ServerMiddleware> logger, IConfiguration config)
         {
             var req = httpContext.Request;
             logger.LogInformation("Received request: {@Headers} {@Path}", req.Headers, req.Path);
 
             var settings = config.Get<Settings>();
 
-            var content = await System.IO.File.ReadAllTextAsync(settings.OutFilePath, System.Text.Encoding.UTF8);
+            var content = await fileSystem.File.ReadAllTextAsync(settings.OutFilePath, System.Text.Encoding.UTF8);
 
             logger.LogInformation("Read from {path}: '{content}'", settings.OutFilePath, content.Replace(Environment.NewLine, "\\n"));
 
@@ -38,7 +40,7 @@ namespace HttpServer
         }
     }
 
-    class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
@@ -67,6 +69,7 @@ namespace HttpServer
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddSingleton<IFileSystem, FileSystem>();
                 });
     }
 }
