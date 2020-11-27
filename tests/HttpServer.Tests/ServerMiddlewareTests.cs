@@ -44,6 +44,7 @@ namespace HttpServer.Tests
                         .ConfigureAppConfiguration(ProgramCommon.ConfigureApplication)
                         .ConfigureServices(services =>
                         {
+                            services.AddTransient<ServerMiddleware>();
                             services.AddTransient(_ => _fileSystemMock.Object);
                             services.AddTransient(_ => _loggerMock.Object);
                         })
