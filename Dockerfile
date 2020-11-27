@@ -4,12 +4,14 @@ ARG TargetProject
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim as runtime
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends netcat
+
+# ENV TINI_VERSION v0.19.0
+# ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
 # Install tini https://github.com/krallin/tini
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+COPY ./DevOps/scripts/tini /tini
 RUN chmod +x /tini
+
 
 EXPOSE 80
 # Run the actual application under Tini
@@ -50,6 +52,9 @@ FROM runtime as final
 WORKDIR /app
 ARG TargetProject
 ENV EnvTargetProject=${TargetProject}
+
+# RUN apt-get update && apt-get install -y --no-install-recommends netcat
+
 COPY --from=publish /app/publish .
 
 # Create a script to run the specified TargetProject
