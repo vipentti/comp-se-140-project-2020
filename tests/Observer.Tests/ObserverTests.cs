@@ -39,7 +39,8 @@ namespace Observer.Tests
                 _configuration,
                 _clientMock.Object,
                 _fileSystemMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                TestUtils.Utils.GetTestOptions()
             );
 
             var testMessage = new Message
