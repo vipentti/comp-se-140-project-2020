@@ -8,18 +8,22 @@ using System.Threading.Tasks;
 
 namespace Intermediate
 {
-    internal class Intermediate : BackgroundService
+    public class Intermediate : BackgroundService
     {
         private readonly ILogger<Intermediate> logger;
-        private readonly RabbitClient original;
-        private readonly RabbitClient intermediate;
+        private readonly IRabbitClient original;
+        private readonly IRabbitClient intermediate;
 
-        public Intermediate(IServiceProvider provider, ILogger<Intermediate> logger)
+        public Intermediate(IRabbitClient original, IRabbitClient intermediate, ILogger<Intermediate> logger)
         {
-            this.original = provider.GetRequiredService<RabbitClient>();
-            this.intermediate = provider.GetRequiredService<RabbitClient>();
-            this.logger = logger;
+            this.original = original;
+            this.intermediate = intermediate;
 
+            if (ReferenceEquals(this.intermediate, this.original)) {
+                throw new ArgumentException($"{nameof(original)} and {nameof(intermediate)} cannot refer to the same object");
+            }
+
+            this.logger = logger;
             this.original.OnMessageReceived += OnOriginalMessage;
         }
 
