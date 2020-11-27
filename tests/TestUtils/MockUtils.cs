@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using System.Threading;
-using Common;
+﻿using Common;
 using Moq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestUtils
 {

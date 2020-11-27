@@ -1,4 +1,3 @@
-
 namespace Common
 {
     public record RabbitMQOptions

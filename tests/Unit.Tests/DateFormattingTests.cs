@@ -1,7 +1,7 @@
-using Xunit;
 using Common;
-using System;
 using FluentAssertions;
+using System;
+using Xunit;
 
 namespace Unit.Tests
 {

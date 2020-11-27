@@ -1,9 +1,9 @@
-using Xunit;
-using Moq;
 using Common;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Xunit;
 
 namespace Original.Tests
 {

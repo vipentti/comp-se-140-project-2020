@@ -1,10 +1,10 @@
-using System;
-using Xunit;
-using Moq;
 using Common;
-using System.IO.Abstractions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.IO.Abstractions;
+using Xunit;
 
 namespace Observer.Tests
 {

@@ -4,8 +4,10 @@ namespace E2E.Tests
 {
     public sealed class E2EFactAttribute : FactAttribute
     {
-        public E2EFactAttribute() {
-            if (!IsE2EEnvironment()) {
+        public E2EFactAttribute()
+        {
+            if (!IsE2EEnvironment())
+            {
                 Skip = "Ignore when E2E environment variable has not been set.";
             }
         }

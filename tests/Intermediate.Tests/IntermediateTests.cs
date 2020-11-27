@@ -1,10 +1,10 @@
-using System;
-using Xunit;
-using Moq;
-using FluentAssertions;
 using Common;
-using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Intermediate.Tests
 {

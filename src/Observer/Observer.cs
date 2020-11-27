@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
+using System.IO.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO.Abstractions;
-using Microsoft.Extensions.Options;
 
 namespace Observer
 {

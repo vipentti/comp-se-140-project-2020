@@ -1,13 +1,12 @@
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
-using FluentAssertions;
 
 namespace Unit.Tests
 {
     /// <summary>
-    /// Provides the ability to trigger test failures for example in CI
-    /// by setting specific configuration/environment variables to contain
-    /// certain values
+    /// Provides the ability to trigger test failures for example in CI by setting specific
+    /// configuration/environment variables to contain certain values
     /// </summary>
     public class OptionallyFailingTest
     {

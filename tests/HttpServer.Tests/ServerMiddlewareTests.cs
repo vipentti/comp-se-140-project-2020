@@ -1,17 +1,16 @@
-using System;
-using Xunit;
-using Moq;
-using FluentAssertions;
 using Common;
-using System.Threading;
-using System.Threading.Tasks;
-using System.IO.Abstractions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using FluentAssertions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System.IO.Abstractions;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace HttpServer.Tests
 {
