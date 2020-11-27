@@ -125,6 +125,7 @@ namespace Common
                     var config = hostContext.Configuration;
 
                     services.Configure<RabbitMQOptions>(config.GetSection("RabbitMQ"));
+                    services.Configure<CommonOptions>(config);
                 });
     }
 }

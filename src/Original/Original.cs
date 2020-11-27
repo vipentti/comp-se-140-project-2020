@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Original
 {
@@ -23,20 +24,20 @@ namespace Original
 
             await rabbitClient.WaitForRabbitMQ(stoppingToken);
 
-            await rabbitClient.TryConnect(Constants.ExchangeName, Constants.OriginalTopic, stoppingToken);
+            await rabbitClient.TryConnect(options.ExchangeName, options.OriginalTopic, stoppingToken);
 
             logger.LogInformation("Connected");
 
-            await Task.Delay(Constants.DelayAfterConnect, stoppingToken);
+            await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
             int messageToSend = 1;
 
             while (!stoppingToken.IsCancellationRequested
-                   && messageToSend <= Constants.MaximumNumberOfMessagesToSend)
+                   && messageToSend <= options.MaximumNumberOfMessagesToSend)
             {
                 rabbitClient.SendMessage($"MSG_{messageToSend}");
                 ++messageToSend;
-                await Task.Delay(Constants.DelayBetweenMessages, stoppingToken);
+                await Task.Delay(options.DelayBetweenMessages, stoppingToken);
             }
 
             logger.LogInformation("Finished sending messages after {TotalSeconds} seconds", stopWatch.Elapsed.TotalSeconds);
@@ -44,11 +45,13 @@ namespace Original
 
         private readonly ILogger<Original> logger;
         private readonly IRabbitClient rabbitClient;
+        private readonly CommonOptions options;
 
-        public Original(IRabbitClient rabbit, ILogger<Original> logger)
+        public Original(IRabbitClient rabbitClient, ILogger<Original> logger, IOptions<CommonOptions> options)
         {
-            this.rabbitClient = rabbit;
+            this.rabbitClient = rabbitClient;
             this.logger = logger;
+            this.options = options.Value;
         }
     }
 }
