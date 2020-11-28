@@ -105,7 +105,7 @@ namespace APIGateway.Tests.Features.States
 
             List<RunLogEntry> initialEntries = (await client.GetRunLogEntries("/run-log")).ToList();
 
-            initialEntries.Should().BeEmpty();
+            //initialEntries.Should().BeEmpty();
 
             //initialEntries.Should().SatisfyRespectively(fst =>
             //{

@@ -1,67 +1,114 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http.Features;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
 {
     public class InMemoryRunLogService : IRunLogService
     {
-        private readonly ConcurrentBag<RunLogEntry> runLogEntries = new();
-        private readonly ConcurrentDictionary<int, RunLogEntry> runLog = new();
+        //private readonly ConcurrentBag<RunLogEntry> runLogEntries = new();
+        //private readonly ConcurrentDictionary<int, RunLogEntry> runLog = new();
+        //private int currentIndex = 0;
 
-        public Task ClearRunLogEntries()
-        {
-            runLogEntries.Clear();
-            runLog.Clear();
-            return Task.CompletedTask;
-        }
+        private readonly List<RunLogEntry> logEntries = new();
+        private readonly SemaphoreSlim semaphoreSlim = new(1);
 
-        public Task<IEnumerable<RunLogEntry>> GetRunLogEntries()
+        public async Task ClearRunLogEntries()
         {
-            var items = runLog.ToList().OrderBy(it => it.Key).Select(it => it.Value).ToList();
-            return Task.FromResult<IEnumerable<RunLogEntry>>(items);
-        }
-
-        public Task<IEnumerable<RunLogEntry>> ReinitRunLog(RunLogEntry entry)
-        {
-            ClearRunLogEntries();
-            WriteEntry(entry);
-            return GetRunLogEntries();
-        }
-
-        public Task WriteEntry(RunLogEntry entry)
-        {
-            runLogEntries.Add(entry);
-            var count = runLog.Count;
-            if (!runLog.TryAdd(count, entry))
+            //runLogEntries.Clear();
+            //runLog.Clear();
+            //return Task.CompletedTask;
+            try
             {
-                throw new InvalidOperationException($"Failed to add entry {entry}");
+                await semaphoreSlim.WaitAsync();
+                logEntries.Clear();
             }
-            return Task.CompletedTask;
+            finally
+            {
+                semaphoreSlim.Release();
+            }
         }
 
-        public Task WriteStateChange(RunLogEntry entry)
+        public async Task<IEnumerable<RunLogEntry>> GetRunLogEntries()
         {
-            if (GetLast()?.State != entry.State)
+            //var items = runLog.ToList().OrderBy(it => it.Key).Select(it => it.Value).ToList();
+            //return Task.FromResult<IEnumerable<RunLogEntry>>(items);
+            try
             {
-                WriteEntry(entry);
+                await semaphoreSlim.WaitAsync();
+                return logEntries.ToList();
             }
-
-            return Task.CompletedTask;
+            finally
+            {
+                semaphoreSlim.Release();
+            }
         }
 
-        private RunLogEntry? GetLast()
+        public async Task<IEnumerable<RunLogEntry>> ReinitRunLog(RunLogEntry entry)
         {
-            if (runLog.IsEmpty)
+            await ClearRunLogEntries();
+            await WriteEntry(entry);
+            return await GetRunLogEntries();
+        }
+
+        public async Task WriteEntry(RunLogEntry entry)
+        {
+            try
             {
-                return null;
+                await semaphoreSlim.WaitAsync();
+                logEntries.Add(entry);
             }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
+            //runLogEntries.Add(entry);
+            ////var count = runLog.Count;
+            //var thisIndex = Interlocked.Increment(ref currentIndex) - 1;
+            ////var thisIndex = currentIndex;
 
-            var current = runLog.Count;
+            ////Interlocked.Increment(ref currentIndex);
 
-            return runLog[current - 1];
+            //runLog[thisIndex] = entry;
+
+            ////if (!runLog.TryAdd(thisIndex - 1, entry))
+            ////{
+            ////    throw new InvalidOperationException($"Failed to add entry {entry}");
+            ////}
+
+            //return Task.CompletedTask;
+        }
+
+        public async Task WriteStateChange(RunLogEntry entry)
+        {
+            var last = await GetLast();
+            if (last?.State != entry.State)
+            {
+                await WriteEntry(entry);
+            }
+        }
+
+        private async Task<RunLogEntry?> GetLast()
+        {
+            try
+            {
+                await semaphoreSlim.WaitAsync();
+                if (logEntries.Count == 0)
+                {
+                    return null;
+                }
+
+                return logEntries[logEntries.Count - 1];
+            }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
         }
     }
 }

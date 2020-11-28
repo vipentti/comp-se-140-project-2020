@@ -13,15 +13,15 @@ namespace APIGateway.Tests.Features.States
 
         public StateServiceTests()
         {
-            //stateService = new StateService(
-            //    new InMemoryRunLogService(),
-            //    new TestDateTimeService()
-            //    {
-            //        UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45, 0, System.DateTimeKind.Utc)
-            //    }
-            //);
+            stateService = new StateService(
+                new InMemoryRunLogService(),
+                new TestDateTimeService()
+                {
+                    UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45, 0, System.DateTimeKind.Utc)
+                }
+            );
 
-            stateService = new StateService();
+            //stateService = new StateService();
         }
 
         [Fact]

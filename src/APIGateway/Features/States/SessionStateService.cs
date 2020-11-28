@@ -16,8 +16,7 @@ namespace APIGateway.Features.States
 
         private class Services
         {
-            public StateService StateService { get; init; } = new StateService();
-            public InMemoryRunLogService RunLog { get; init; } = new InMemoryRunLogService();
+            public StateService StateService { get; init; } = null!;
         }
 
         private readonly ConcurrentDictionary<string, Services> stateServices = new();
@@ -25,7 +24,10 @@ namespace APIGateway.Features.States
         public SessionStateService(IHttpContextAccessor contextAccessor, IDateTimeService dateTime)
         {
             this.contextAccessor = contextAccessor;
-            this.stateServices.TryAdd("default", new Services());
+            this.stateServices.TryAdd("default", new Services()
+            {
+                StateService = new StateService(new InMemoryRunLogService(), dateTime),
+            });
             this.dateTime = dateTime;
         }
 
@@ -47,7 +49,7 @@ namespace APIGateway.Features.States
             var sessionId = GetSessionId();
 
             await GetService(sessionId).StateService.SetCurrentState(state);
-            await GetService(sessionId).RunLog.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
+            //await GetService(sessionId).RunLog.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
 
             return state;
         }
@@ -56,7 +58,10 @@ namespace APIGateway.Features.States
         {
             if (!stateServices.ContainsKey(sessionId))
             {
-                stateServices.TryAdd(sessionId, new Services());
+                stateServices.TryAdd(sessionId, new Services()
+                {
+                    StateService = new StateService(new InMemoryRunLogService(), dateTime),
+                });
             }
 
             return stateServices[sessionId];
@@ -80,5 +85,9 @@ namespace APIGateway.Features.States
             return "default";
             //throw new InvalidOperationException("Missing X-Session-Id header");
         }
+
+        public Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => GetService(GetSessionId()).StateService.GetRunLogEntries();
+
+        public Task ClearRunLogEntries() => GetService(GetSessionId()).StateService.ClearRunLogEntries();
     }
 }

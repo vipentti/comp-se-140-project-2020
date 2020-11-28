@@ -97,6 +97,9 @@ namespace E2E.Tests.APIGatewayTests
         [E2EFact]
         public async Task Get_RunLog_Returns_Entries()
         {
+            var putResp = await PutStringRequest("/reinit-log", ApplicationState.Init);
+            putResp.EnsureSuccessStatusCode();
+
             using var request = new HttpRequestMessage(HttpMethod.Get, Endpoint);
 
             using HttpResponseMessage response = await SendRequest(request);
