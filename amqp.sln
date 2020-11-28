@@ -15,25 +15,34 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C59DFAEF-C618-4A79-AF63-53D9EC1BE203}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2E.Tests", "tests\E2E.Tests\E2E.Tests.csproj", "{A7E16B22-BF5B-4E55-BA79-53794255D0D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E2E.Tests", "tests\E2E.Tests\E2E.Tests.csproj", "{A7E16B22-BF5B-4E55-BA79-53794255D0D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit.Tests", "tests\Unit.Tests\Unit.Tests.csproj", "{3AB2113D-D3BB-4BC5-987C-D4C86662E187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unit.Tests", "tests\Unit.Tests\Unit.Tests.csproj", "{3AB2113D-D3BB-4BC5-987C-D4C86662E187}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Original.Tests", "tests\Original.Tests\Original.Tests.csproj", "{F8794A6E-C3B7-476B-8C65-B760AB22993A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Original.Tests", "tests\Original.Tests\Original.Tests.csproj", "{F8794A6E-C3B7-476B-8C65-B760AB22993A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intermediate.Tests", "tests\Intermediate.Tests\Intermediate.Tests.csproj", "{7918D459-4748-47B7-810B-C9AA2471DE7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intermediate.Tests", "tests\Intermediate.Tests\Intermediate.Tests.csproj", "{7918D459-4748-47B7-810B-C9AA2471DE7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "tests\TestUtils\TestUtils.csproj", "{AB8B7B52-174C-4917-8D07-E6C1932EDBD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtils", "tests\TestUtils\TestUtils.csproj", "{AB8B7B52-174C-4917-8D07-E6C1932EDBD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer.Tests", "tests\Observer.Tests\Observer.Tests.csproj", "{C2D714C1-4830-4EE2-8953-9DC65D595708}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Observer.Tests", "tests\Observer.Tests\Observer.Tests.csproj", "{C2D714C1-4830-4EE2-8953-9DC65D595708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer.Tests", "tests\HttpServer.Tests\HttpServer.Tests.csproj", "{7170AEB7-F9EF-44A3-88B6-D9A56A358C9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpServer.Tests", "tests\HttpServer.Tests\HttpServer.Tests.csproj", "{7170AEB7-F9EF-44A3-88B6-D9A56A358C9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{703AADDD-487A-45AB-ABB7-06E65281C2B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "src\APIGateway\APIGateway.csproj", "{D30E9E1E-A34C-48D3-B026-B360516D6BE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIGateway", "src\APIGateway\APIGateway.csproj", "{D30E9E1E-A34C-48D3-B026-B360516D6BE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway.Tests", "tests\APIGateway.Tests\APIGateway.Tests.csproj", "{7F5DD654-A863-412D-9D0C-921CE2B39841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIGateway.Tests", "tests\APIGateway.Tests\APIGateway.Tests.csproj", "{7F5DD654-A863-412D-9D0C-921CE2B39841}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B8CE1161-4748-492A-AAFA-8B4BB4DFE690}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitlab-ci.yml = .gitlab-ci.yml
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -217,10 +226,12 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6BFAFB8C-9A2E-4152-92FA-FDBE5257A0CF}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{8647FF0B-1D67-48B8-AFA7-7DA329D438BF} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
+		{1CF855FA-1D7D-478D-97D2-1BADB474345A} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
+		{5883C815-0B93-49E9-AD68-9A02DB5FFBB7} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
+		{01D8FECE-DF24-473C-A936-98FB5AE9CA03} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
+		{98F4098A-26EB-4CF4-824D-1EB2145266E3} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
 		{A7E16B22-BF5B-4E55-BA79-53794255D0D3} = {C59DFAEF-C618-4A79-AF63-53D9EC1BE203}
 		{3AB2113D-D3BB-4BC5-987C-D4C86662E187} = {C59DFAEF-C618-4A79-AF63-53D9EC1BE203}
 		{F8794A6E-C3B7-476B-8C65-B760AB22993A} = {C59DFAEF-C618-4A79-AF63-53D9EC1BE203}
@@ -230,5 +241,8 @@ Global
 		{7170AEB7-F9EF-44A3-88B6-D9A56A358C9A} = {C59DFAEF-C618-4A79-AF63-53D9EC1BE203}
 		{D30E9E1E-A34C-48D3-B026-B360516D6BE8} = {703AADDD-487A-45AB-ABB7-06E65281C2B4}
 		{7F5DD654-A863-412D-9D0C-921CE2B39841} = {C59DFAEF-C618-4A79-AF63-53D9EC1BE203}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BFAFB8C-9A2E-4152-92FA-FDBE5257A0CF}
 	EndGlobalSection
 EndGlobal
