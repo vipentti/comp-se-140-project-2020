@@ -1,21 +1,56 @@
 ﻿using Common;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Original
 {
     public class Original : BackgroundService
     {
+        //public static async Task Main(string[] args)
+        //{
+        //    await ProgramCommon.Execute(args, svc =>
+        //    {
+        //        svc.AddHostedService<Original>();
+        //    });
+        //}
+
         public static async Task Main(string[] args)
         {
-            await ProgramCommon.Execute(args, svc =>
+            ProgramCommon.ConfigureSerilog();
+
+            try
             {
-                svc.AddHostedService<Original>();
-            });
+                var host = CreateHostBuilder(args).Build();
+
+                await host.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal("Uncaught exception: {Message} {Exception}", ex.Message, ex);
+            }
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .ConfigureAppConfiguration(ProgramCommon.ConfigureApplication)
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder
+                        .UseSerilog()
+                        .UseKestrel()
+                        .UseStartup<Startup>();
+                });
+
+        public void Reset()
+        {
+            messageToSend = 1;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,10 +65,7 @@ namespace Original
 
             await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
-            int messageToSend = 1;
-
-            while (!stoppingToken.IsCancellationRequested
-                   && messageToSend <= options.MaximumNumberOfMessagesToSend)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 rabbitClient.SendMessage($"MSG_{messageToSend}");
                 ++messageToSend;
@@ -46,6 +78,7 @@ namespace Original
         private readonly ILogger<Original> logger;
         private readonly IRabbitClient rabbitClient;
         private readonly CommonOptions options;
+        private int messageToSend = 1;
 
         public Original(IRabbitClient rabbitClient, ILogger<Original> logger, IOptions<CommonOptions> options)
         {

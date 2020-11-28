@@ -1,8 +1,11 @@
+using APIGateway.Features.Original;
 using APIGateway.Features.States;
+using Common;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +50,28 @@ namespace APIGateway.Tests
                 .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
                 .Select(RunLogEntry.FromString)
                 .ToList();
+        }
+
+        public static void SetupMockServices(this IServiceCollection services, Mock<IOriginalService> originalServiceMock = default)
+        {
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType ==
+                    typeof(IOriginalService));
+
+            services.Remove(descriptor);
+
+            //services.AddTransient<IMessageService, TestMessageService>();
+            originalServiceMock ??= CreateMockOriginalService();
+            services.AddTransient<IOriginalService>(svc => originalServiceMock.Object);
+        }
+
+        public static Mock<IOriginalService> CreateMockOriginalService()
+        {
+            var mock = new Mock<IOriginalService>(MockBehavior.Strict);
+            mock.Setup(it => it.Start()).ReturnsAsync(ApplicationState.Init);
+            mock.Setup(it => it.Stop()).ReturnsAsync(ApplicationState.Paused);
+            mock.Setup(it => it.Reset()).ReturnsAsync(ApplicationState.Init);
+            return mock;
         }
     }
 }

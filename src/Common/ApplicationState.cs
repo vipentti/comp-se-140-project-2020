@@ -1,6 +1,4 @@
-using Common;
-
-namespace APIGateway.Features.States
+namespace Common
 {
     public record ApplicationState : Enumeration
     {

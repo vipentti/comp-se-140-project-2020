@@ -35,12 +35,12 @@ namespace Original.Tests
             // Give time for the service to run
             var config = options.Value;
 
-            await Task.Delay((config.MaximumNumberOfMessagesToSend + 1) * config.DelayBetweenMessages + config.DelayAfterConnect);
+            await Task.Delay(5 * config.DelayBetweenMessages + config.DelayAfterConnect);
 
             await original.StopAsync(CancellationToken.None);
 
             // Assert
-            _rabbitClientMock.Verify(it => it.SendMessage(It.IsAny<string>()), Times.Exactly(config.MaximumNumberOfMessagesToSend));
+            _rabbitClientMock.Verify(it => it.SendMessage(It.IsAny<string>()), Times.AtLeast(5));
         }
     }
 }

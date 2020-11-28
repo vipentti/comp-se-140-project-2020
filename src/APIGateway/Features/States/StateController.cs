@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using APIGateway.Features.Original;
+using Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,10 +12,12 @@ namespace APIGateway.Features.States
     public class StateController : ControllerBase
     {
         private readonly IStateService stateService;
+        private readonly IOriginalService originalService;
 
-        public StateController(IStateService stateService)
+        public StateController(IStateService stateService, IOriginalService originalService)
         {
             this.stateService = stateService;
+            this.originalService = originalService;
         }
 
         [HttpGet]
@@ -34,6 +37,20 @@ namespace APIGateway.Features.States
         public async Task<ActionResult<ApplicationState>> SetCurrentState([FromBody] ApplicationState state)
         {
             _ = await stateService.SetCurrentState(state);
+            switch (state)
+            {
+                case ApplicationState it when it == ApplicationState.Init:
+                {
+                    await originalService.Reset();
+                }
+                break;
+
+                case var it when it == ApplicationState.Paused:
+                {
+                    await originalService.Stop();
+                }
+                break;
+            }
             return state;
         }
 

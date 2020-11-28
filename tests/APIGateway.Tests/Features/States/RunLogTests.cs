@@ -1,8 +1,11 @@
+using APIGateway.Features.Original;
 using APIGateway.Features.States;
 using Common;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,9 +124,12 @@ namespace APIGateway.Tests.Features.States
             UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
         };
 
+        private readonly Mock<IOriginalService> originalServiceMock;
+
         public RunLogTests(APIGatewayAppFactory factory)
         {
             this.factory = factory;
+            this.originalServiceMock = Extensions.CreateMockOriginalService();
         }
 
         private HttpClient _client;
@@ -140,6 +146,20 @@ namespace APIGateway.Tests.Features.States
                 _client = factory.WithTestServices(services =>
                 {
                     // Services...
+
+                    services.SetupMockServices(originalServiceMock);
+
+                    //var descriptor = services.SingleOrDefault(
+                    //    d => d.ServiceType ==
+                    //        typeof(IOriginalService));
+
+                    //services.Remove(descriptor);
+
+                    ////services.AddTransient<IMessageService, TestMessageService>();
+                    //services.AddTransient<IOriginalService>(svc => originalServiceMock.Object);
+                    //services.AddRefitClient<IOriginalService>(new RefitSettings()
+                    //{
+                    //});
                     services.AddSingleton(_ => dateTime);
                 }).CreateClient();
 

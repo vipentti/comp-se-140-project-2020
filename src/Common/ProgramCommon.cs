@@ -111,6 +111,19 @@ namespace Common
                 .AddEnvironmentVariables();
         }
 
+        public static void ConfigureCommonServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<RabbitClient>();
+            services.AddTransient<IRabbitClient, RabbitClient>();
+            services.AddTransient<IDateTimeService, DateTimeService>();
+
+            // Register FileSystem
+            services.AddSingleton<IFileSystem, FileSystem>();
+
+            services.Configure<RabbitMQOptions>(configuration.GetSection("RabbitMQ"));
+            services.Configure<CommonOptions>(configuration);
+        }
+
         public static IHostBuilder CreateHostBuilder(string[] args, Action<IServiceCollection> configureServices) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog()

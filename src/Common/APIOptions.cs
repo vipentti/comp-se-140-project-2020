@@ -4,5 +4,6 @@ namespace APIGateway
     {
         public string ApiGatewayUrl { get; init; } = "http://apigateway";
         public string HttpServerUrl { get; init; } = "http://httpserver";
+        public string OriginalServerUrl { get; init; } = "http://original";
     }
 }

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using APIGateway.Features.Messages;
+using APIGateway.Features.Original;
 using APIGateway.Features.States;
 using APIGateway.Utils;
 using Common;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Refit;
 
 namespace APIGateway
 {
@@ -43,6 +45,12 @@ namespace APIGateway
             {
                 svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
             });
+
+            services.AddRefitClient<IOriginalService>()
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new System.Uri(Configuration.Get<APIOptions>().OriginalServerUrl);
+                });
 
             services.AddTransient<IDateTimeService, DateTimeService>();
 
