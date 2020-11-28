@@ -7,6 +7,8 @@ using APIGateway.Features.Messages;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System.Net.Http;
+using APIGateway.Features.States;
 
 namespace APIGateway.Tests.Features.Messages
 {
@@ -18,6 +20,41 @@ namespace APIGateway.Tests.Features.Messages
         public StateTests(APIGatewayAppFactory factory)
         {
             this.factory = factory;
+        }
+
+        public class PutData : TheoryData<ApplicationState>
+        {
+            public PutData()
+            {
+                Add(ApplicationState.Init);
+                Add(ApplicationState.Paused);
+                Add(ApplicationState.Running);
+                Add(ApplicationState.Shutdown);
+            }
+        }
+
+        [Theory]
+        [ClassData(typeof(PutData))]
+        public async Task Put_State_Updates_Current_State(ApplicationState state)
+        {
+            // Arrange
+            var client = factory.WithTestServices(services=> {
+                // Services...
+            }).CreateClient();
+
+            var httpContent = new StringContent(state.ToString());
+
+            // Act
+            var response = await client.PutAsync(endpoint, httpContent);
+
+            // Assert
+
+            response.Should().NotBeNull();
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            content.Should().Be(state.ToString());
         }
 
         [Fact]
