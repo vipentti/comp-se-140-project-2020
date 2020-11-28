@@ -18,13 +18,14 @@ namespace Observer
         private readonly Settings settings;
         private readonly IFileSystem fileSystem;
         private readonly CommonOptions options;
+        private readonly IDateTimeService dateTime;
 
         public class Settings
         {
             public string OutFilePath { get; set; } = "";
         }
 
-        public Observer(IConfiguration config, IRabbitClient client, IFileSystem fileSystem, ILogger<Observer> logger, IOptions<CommonOptions> options)
+        public Observer(IConfiguration config, IRabbitClient client, IFileSystem fileSystem, ILogger<Observer> logger, IOptions<CommonOptions> options, IDateTimeService dateTime)
         {
             this.logger = logger;
             this.client = client;
@@ -34,6 +35,7 @@ namespace Observer
 
             settings = config.Get<Settings>();
             this.options = options.Value;
+            this.dateTime = dateTime;
         }
 
         private static async Task Main(string[] args)
@@ -48,7 +50,7 @@ namespace Observer
         {
             logger.LogInformation("Received message {@Message}", message);
 
-            string output = $"{DateTime.UtcNow.ToISO8601()} Topic {message.Topic}: {message.Content}";
+            string output = $"{dateTime.UtcNow.ToISO8601()} Topic {message.Topic}: {message.Content}";
 
             logger.LogInformation("writing to {path}: '{output}'", settings.OutFilePath, output);
 

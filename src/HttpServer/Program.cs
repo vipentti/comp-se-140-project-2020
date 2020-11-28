@@ -46,6 +46,7 @@ namespace HttpServer
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddTransient<IDateTimeService, DateTimeService>();
                     services.AddSingleton<IFileSystem, FileSystem>();
                     services.AddTransient<ServerMiddleware>();
                 });

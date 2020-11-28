@@ -1,6 +1,7 @@
 
 using APIGateway.Features.Messages;
 using APIGateway.Features.States;
+using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,7 @@ namespace APIGateway
             services.AddTransient<MessagesHandler>();
             services.AddTransient<StateGetHandler>();
             services.AddTransient<StatePutHandler>();
+            services.AddTransient<IDateTimeService, DateTimeService>();
 
             services.AddSingleton<IStateService, StateService>();
 

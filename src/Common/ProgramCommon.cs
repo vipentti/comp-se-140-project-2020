@@ -116,6 +116,7 @@ namespace Common
                 {
                     services.AddTransient<RabbitClient>();
                     services.AddTransient<IRabbitClient, RabbitClient>();
+                    services.AddTransient<IDateTimeService, DateTimeService>();
 
                     // Register FileSystem
                     services.AddSingleton<IFileSystem, FileSystem>();

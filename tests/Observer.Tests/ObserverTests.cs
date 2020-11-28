@@ -34,13 +34,19 @@ namespace Observer.Tests
         [Fact]
         public void Observer_OnMessageReceived_Writes_Message_To_FileSystem()
         {
+            var dateTime = new TestUtils.TestDateTimeService()
+            {
+                UtcNow = new DateTime(2020, 11, 28, 11, 30, 45)
+            };
+
             // Arrange
             var service = new Observer(
                 _configuration,
                 _clientMock.Object,
                 _fileSystemMock.Object,
                 _loggerMock.Object,
-                TestUtils.Utils.GetTestOptions()
+                TestUtils.Utils.GetTestOptions(),
+                dateTime
             );
 
             var testMessage = new Message
@@ -59,7 +65,8 @@ namespace Observer.Tests
 
             _fileMock.Verify(it =>
                 it.AppendAllText(It.IsAny<string>(), It.Is<string>(
-                    msg => msg.Contains($"Topic {testMessage.Topic}: {testMessage.Content}")
+                    // Remove trailing whitespace/newlines
+                    msg => msg.TrimEnd().Equals($"{dateTime.UtcNow.ToISO8601()} Topic {testMessage.Topic}: {testMessage.Content}")
                 )),
                 Times.Exactly(1)
             );
