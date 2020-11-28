@@ -1,3 +1,4 @@
+using Common.Enumerations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -94,7 +95,9 @@ namespace Common
 
             var loggerConfig = new LoggerConfiguration()
                 .ReadFrom
-                .Configuration(appSettings);
+                .Configuration(appSettings)
+                .Destructure
+                .With<EnumerationDestructurePolicy>();
 
             Log.Logger = loggerConfig.CreateLogger();
         }

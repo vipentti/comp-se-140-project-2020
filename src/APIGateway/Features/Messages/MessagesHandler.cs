@@ -1,12 +1,17 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace APIGateway.Features.Messages
 {
-    public class MessagesHandler : IRequestHandler
+    public class MessagesHandler : IRoute
     {
         private readonly IMessageService messageService;
+
+        public HttpMethod Method { get; } = HttpMethod.Get;
+
+        public string Pattern { get; } = "/messages";
 
         public MessagesHandler(IMessageService messageService)
         {

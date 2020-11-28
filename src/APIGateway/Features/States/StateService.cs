@@ -11,22 +11,33 @@ namespace APIGateway.Features.States
 
         public async Task<ApplicationState> GetCurrentState()
         {
-            try {
+            try
+            {
                 await stateSemaphore.WaitAsync();
                 return currentState;
-            } finally {
+            }
+            finally
+            {
                 stateSemaphore.Release();
             }
         }
 
         public async Task<ApplicationState> SetCurrentState(ApplicationState state)
         {
-            try {
+            if (state is null)
+            {
+                throw new System.ArgumentNullException(nameof(state));
+            }
+
+            try
+            {
                 await stateSemaphore.WaitAsync();
                 var previous = currentState;
                 currentState = state;
                 return previous;
-            } finally {
+            }
+            finally
+            {
                 stateSemaphore.Release();
             }
         }
