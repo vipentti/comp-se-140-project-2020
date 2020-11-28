@@ -8,25 +8,33 @@ namespace APIGateway.Features.States
     public class InMemoryRunLogService : IRunLogService
     {
         private readonly ConcurrentBag<RunLogEntry> runLogEntries = new();
+        private readonly ConcurrentDictionary<int, RunLogEntry> runLog = new();
 
         public Task ClearRunLogEntries()
         {
             runLogEntries.Clear();
+            runLog.Clear();
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => Task.FromResult<IEnumerable<RunLogEntry>>(runLogEntries.ToList());
+        public Task<IEnumerable<RunLogEntry>> GetRunLogEntries()
+        {
+            var items = runLog.ToList().OrderBy(it => it.Key).Select(it => it.Value).ToList();
+            return Task.FromResult<IEnumerable<RunLogEntry>>(items);
+        }
 
         public Task<IEnumerable<RunLogEntry>> ReinitRunLog(RunLogEntry entry)
         {
-            runLogEntries.Clear();
-            runLogEntries.Add(entry);
+            ClearRunLogEntries();
+            WriteEntry(entry);
             return GetRunLogEntries();
         }
 
         public Task WriteEntry(RunLogEntry entry)
         {
             runLogEntries.Add(entry);
+            var count = runLog.Count;
+            runLog.TryAdd(count, entry);
             return Task.CompletedTask;
         }
     }

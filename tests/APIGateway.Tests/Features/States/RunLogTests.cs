@@ -1,6 +1,7 @@
 using APIGateway.Features.States;
 using Common;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -107,11 +108,43 @@ namespace APIGateway.Tests.Features.States
             });
 
             // Initialize entries
-            foreach (var state in Enumeration.GetAll<ApplicationState>())
+            var states = new ApplicationState[]
             {
-                var putResponse = await client.PutStringContent("/state", state);
-                putResponse.EnsureSuccessStatusCode();
+                ApplicationState.Init,
+                ApplicationState.Running,
+                ApplicationState.Paused,
+                ApplicationState.Shutdown,
+            };
+
+            foreach (var state in states)
+            {
+                (await client.PutStringContent("/state", state)).EnsureSuccessStatusCode();
             }
+
+            //foreach (var state in Enumeration.GetAll<ApplicationState>())
+            //{
+            //    var putResponse = await client.PutStringContent("/state", state);
+            //    putResponse.EnsureSuccessStatusCode();
+            //}
+
+            List<RunLogEntry> newEntries = (await client.GetRunLogEntries("/run-log")).ToList();
+
+            newEntries.Should().HaveCountGreaterThan(initialEntries.Count);
+
+            using (new AssertionScope())
+            {
+                foreach (var ((state, entry), _) in states.Zip(newEntries).Indexed())
+                {
+                    entry.State.Should().Be(state);
+                    entry.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
+                }
+            }
+
+            //newEntries.Should().SatisfyRespectively(fst =>
+            //{
+            //    fst.State.Should().Be(ApplicationState.Init);
+            //    fst.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
+            //});
         }
     }
 

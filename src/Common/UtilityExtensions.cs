@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Common
 {
@@ -13,6 +15,9 @@ namespace Common
         /// <para>NOTE: Differs from regular "o" formatting by not having as many fraction digits</para>
         /// </summary>
         public static string ToISO8601(this DateTime time) => time.ToString(ISO8601Format);
+
+        public static IEnumerable<(T item, int index)> Indexed<T>(this IEnumerable<T> self)
+           => self.Select((item, index) => (item, index));
 
         public static DateTime? FromISO8601(this string input) =>
             DateTime.TryParseExact(input, ISO8601Format, null, DateTimeStyles.AdjustToUniversal, out var result)
