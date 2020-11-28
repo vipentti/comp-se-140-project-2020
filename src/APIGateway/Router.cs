@@ -22,8 +22,6 @@ namespace APIGateway
             HttpMethod Method { get; init; }
 
             string Pattern { get; init; }
-
-            Type HandlerType { get; }
         }
 
         public class Route<THandler> : IRoute
@@ -32,8 +30,6 @@ namespace APIGateway
             public HttpMethod Method { get; init; } = HttpMethod.Get;
 
             public string Pattern { get; init; } = "/";
-
-            public Type HandlerType { get; } = typeof(THandler);
 
             public async Task Handle(HttpContext context)
             {
@@ -57,6 +53,11 @@ namespace APIGateway
             {
                 Method = HttpMethod.Put,
                 Pattern = "/state"
+            },
+            new Route<RunLogGetHandler>()
+            {
+                Method = HttpMethod.Get,
+                Pattern = "/run-log"
             },
         };
 

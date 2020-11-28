@@ -31,6 +31,7 @@ namespace APIGateway
             services.AddTransient<MessagesHandler>();
             services.AddTransient<StateGetHandler>();
             services.AddTransient<StatePutHandler>();
+            services.AddTransient<RunLogGetHandler>();
             services.AddTransient<IDateTimeService, DateTimeService>();
 
             services.AddSingleton<IStateService, StateService>();
