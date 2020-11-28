@@ -19,7 +19,7 @@ namespace APIGateway
 
             endpoints.MapGet("/state", async context =>
             {
-                await context.Response.WriteAsync("");
+                await context.Response.WriteAsync("INIT");
             });
         }
     }
