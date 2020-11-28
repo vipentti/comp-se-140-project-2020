@@ -1,17 +1,13 @@
-using Xunit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Moq;
-using APIGateway.Features.Messages;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using System.Net.Http;
 using APIGateway.Features.States;
 using Common;
-using TestUtils;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using TestUtils;
+using Xunit;
 
 namespace APIGateway.Tests.Features.States
 {

@@ -1,7 +1,6 @@
-
+using APIGateway.Features.Messages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using APIGateway.Features.Messages;
 
 namespace APIGateway.Tests.Features.Messages
 {

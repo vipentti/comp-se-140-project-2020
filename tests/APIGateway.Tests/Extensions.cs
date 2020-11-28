@@ -1,7 +1,7 @@
-using System;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace APIGateway.Tests
 {

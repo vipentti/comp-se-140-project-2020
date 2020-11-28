@@ -12,6 +12,7 @@ namespace HttpServer
         private readonly IFileSystem fileSystem;
         private readonly ILogger<ServerMiddleware> logger;
         private readonly IConfiguration config;
+
         public ServerMiddleware(IFileSystem fileSystem, ILogger<ServerMiddleware> logger, IConfiguration config)
         {
             this.fileSystem = fileSystem;

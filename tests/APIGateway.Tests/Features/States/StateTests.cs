@@ -1,14 +1,8 @@
-using Xunit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Moq;
-using APIGateway.Features.Messages;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using System.Net.Http;
 using APIGateway.Features.States;
+using FluentAssertions;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace APIGateway.Tests.Features.States
 {
@@ -38,7 +32,8 @@ namespace APIGateway.Tests.Features.States
         public async Task Put_State_Updates_Current_State(ApplicationState state)
         {
             // Arrange
-            var client = factory.WithTestServices(services=> {
+            var client = factory.WithTestServices(services =>
+            {
                 // Services...
             }).CreateClient();
 
@@ -61,7 +56,8 @@ namespace APIGateway.Tests.Features.States
         public async Task Get_State_Returns_Current_State()
         {
             // Arrange
-            var client = factory.WithTestServices(services=> {
+            var client = factory.WithTestServices(services =>
+            {
                 // Services...
             }).CreateClient();
 
@@ -83,7 +79,8 @@ namespace APIGateway.Tests.Features.States
         public async Task Get_State_Returns_Success_StatusCode()
         {
             // Arrange
-            var client = factory.WithTestServices(services=> {
+            var client = factory.WithTestServices(services =>
+            {
                 // Services...
             }).CreateClient();
 

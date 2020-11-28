@@ -1,12 +1,11 @@
-using Xunit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Moq;
 using APIGateway.Features.Messages;
+using FluentAssertions;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace APIGateway.Tests.Features.Messages
 {
@@ -27,8 +26,10 @@ namespace APIGateway.Tests.Features.Messages
         public async Task Get_Messages_Calls_GetMessages_From_IMessageService()
         {
             // Arrange
-            var client = factory.WithWebHostBuilder(builder => {
-                builder.ConfigureTestServices(svc => {
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(svc =>
+                {
                     svc.AddTransient(_ => messageServiceMock.Object);
                 });
             }).CreateClient();

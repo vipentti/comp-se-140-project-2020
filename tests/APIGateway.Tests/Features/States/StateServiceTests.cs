@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using APIGateway.Features.States;
 using FluentAssertions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TestUtils;
 using Xunit;
 
