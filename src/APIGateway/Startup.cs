@@ -45,6 +45,7 @@ namespace APIGateway
             services.AddTransient<IDateTimeService, DateTimeService>();
 
             services.AddSingleton<IStateService, StateService>();
+            services.AddSingleton<IRunLogService, InMemoryRunLogService>();
 
             services.Configure<APIOptions>(Configuration);
         }

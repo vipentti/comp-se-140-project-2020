@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using APIGateway.Features.States;
 using FluentAssertions;
+using TestUtils;
 using Xunit;
 
 namespace APIGateway.Tests.Features.States
@@ -13,7 +14,13 @@ namespace APIGateway.Tests.Features.States
 
         public StateServiceTests()
         {
-            stateService = new StateService();
+            stateService = new StateService(
+                new InMemoryRunLogService(),
+                new TestDateTimeService()
+                {
+                    UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45, 0, System.DateTimeKind.Utc)
+                }
+            );
         }
 
         [Fact]
@@ -39,8 +46,10 @@ namespace APIGateway.Tests.Features.States
                 { ApplicationState.Shutdown, ApplicationState.Init },
             };
 
-            for (var i = 0; i < 1000; ++i) {
-                foreach (var (current, next) in transitions) {
+            for (var i = 0; i < 1000; ++i)
+            {
+                foreach (var (current, next) in transitions)
+                {
                     _ = await stateService.SetCurrentState(next);
                 }
             }
@@ -50,5 +59,4 @@ namespace APIGateway.Tests.Features.States
             return await stateService.GetCurrentState();
         }
     }
-
 }

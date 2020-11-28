@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
@@ -8,10 +10,12 @@ namespace APIGateway.Features.States
     public class StateController : ControllerBase
     {
         private readonly IStateService stateService;
+        private readonly IRunLogService runLogService;
 
-        public StateController(IStateService stateService)
+        public StateController(IStateService stateService, IRunLogService runLogService)
         {
             this.stateService = stateService;
+            this.runLogService = runLogService;
         }
 
         [HttpGet]
@@ -40,8 +44,8 @@ namespace APIGateway.Features.States
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<string>> GetRunLog()
         {
-            await Task.Delay(0);
-            return "OK";
+            var entries = await runLogService.GetRunLogEntries();
+            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
         }
     }
 }

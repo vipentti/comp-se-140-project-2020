@@ -1,5 +1,7 @@
-﻿using Common;
+﻿using APIGateway.Features.States;
+using Common;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
@@ -17,6 +19,13 @@ namespace APIGateway
             {
                 var host = CreateHostBuilder(args).Build();
 
+                using (var scope = host.Services.CreateScope())
+                {
+                    var stateService = scope.ServiceProvider.GetRequiredService<IStateService>();
+
+                    await stateService.SetCurrentState(ApplicationState.Init);
+                }
+
                 await host.RunAsync();
             }
             catch (Exception ex)
@@ -29,7 +38,8 @@ namespace APIGateway
             Host.CreateDefaultBuilder(args)
                 .UseSerilog()
                 .ConfigureAppConfiguration(ProgramCommon.ConfigureApplication)
-                .ConfigureWebHostDefaults(builder => {
+                .ConfigureWebHostDefaults(builder =>
+                {
                     builder
                         .UseSerilog()
                         .UseKestrel()
