@@ -61,7 +61,5 @@ namespace APIGateway.Features.States
                 return null;
             }
         }
-
-
     }
 }
