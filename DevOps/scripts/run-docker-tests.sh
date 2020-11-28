@@ -4,13 +4,14 @@ Dockerfile="${1:?Dockerfile}"
 BuildContext="${2?:BuildContext}"
 EnvFile="${3?:EnvFile}"
 TestResultsPath="${4:-$(pwd)/testresults}"
-Tag="${5:-builder:latest}"
+Tag="${Tag:-latest}"
+ImageAndTag="${5:-builder:latest}"
 
 script_dir=$(dirname $(readlink -f $0))
 
 /bin/sh "${script_dir}/build-docker.sh" \
     --file "Dockerfile" \
-    --tag "builder:${tag}" \
+    --tag "builder:${Tag}" \
     --target "testrunner"
 
 if [ ! $? -eq 0 ]; then
@@ -44,7 +45,7 @@ echo ""
 docker run \
     --name "${CONTAINER_NAME}" ${EXTRA_RUN_ARGS:-} \
     --env-file "${EnvFile}" \
-    $Tag
+    $ImageAndTag
 
 CODE=$?
 
