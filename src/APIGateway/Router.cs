@@ -1,4 +1,7 @@
+using System.IO;
+using System.Text;
 using APIGateway.Features.Messages;
+using APIGateway.Features.States;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -17,9 +20,33 @@ namespace APIGateway
                 await handler.Handle(context);
             });
 
+            ApplicationState currentState = ApplicationState.Init;
+
             endpoints.MapGet("/state", async context =>
             {
-                await context.Response.WriteAsync("INIT");
+                await context.Response.WriteAsync(currentState.ToString());
+            });
+
+            endpoints.MapPut("/state", async context =>
+            {
+                context.Request.EnableBuffering();
+
+                var req = context.Request;
+                string bodyStr = "";
+
+                // Arguments: Stream, Encoding, detect encoding, buffer size
+                // AND, the most important: keep stream opened
+                using (StreamReader reader
+                        = new StreamReader(req.Body, Encoding.UTF8, true, 1024, true))
+                {
+                    bodyStr = await reader.ReadToEndAsync();
+                }
+
+                if (ApplicationState.FromName(bodyStr) is ApplicationState nextState) {
+                    currentState = nextState;
+                }
+
+                await context.Response.WriteAsync(currentState.ToString());
             });
         }
     }
