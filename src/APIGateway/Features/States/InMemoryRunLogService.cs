@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,8 +35,33 @@ namespace APIGateway.Features.States
         {
             runLogEntries.Add(entry);
             var count = runLog.Count;
-            runLog.TryAdd(count, entry);
+            if (!runLog.TryAdd(count, entry))
+            {
+                throw new InvalidOperationException($"Failed to add entry {entry}");
+            }
             return Task.CompletedTask;
+        }
+
+        public Task WriteStateChange(RunLogEntry entry)
+        {
+            if (GetLast()?.State != entry.State)
+            {
+                WriteEntry(entry);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private RunLogEntry? GetLast()
+        {
+            if (runLog.IsEmpty)
+            {
+                return null;
+            }
+
+            var current = runLog.Count;
+
+            return runLog[current - 1];
         }
     }
 }

@@ -13,6 +13,7 @@ using Xunit;
 
 namespace APIGateway.Tests.Features.States
 {
+    [CollectionDefinition("Run-Log Tests utilize state", DisableParallelization = true)]
     public abstract class RunLogTestBase
     {
         protected abstract HttpClient client { get; }
@@ -65,8 +66,11 @@ namespace APIGateway.Tests.Features.States
                 .Select(RunLogEntry.FromString)
                 .ToList();
 
-            entries.Should().HaveCount(1);
-            entries[0].Should().Be(new RunLogEntry(dateTime.UtcNow, state));
+            entries.Should().HaveCountGreaterOrEqualTo(1);
+            var last = entries.LastOrDefault();
+            last.State.Should().Be(state);
+            last.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
+            //entries[0].Should().Be(new RunLogEntry(dateTime.UtcNow, state));
         }
 
         public static async Task<IEnumerable<RunLogEntry>> GetRunLogEntries(HttpClient client, string endpoint = "/run-log")
@@ -89,7 +93,7 @@ namespace APIGateway.Tests.Features.States
         }
 
         [Fact]
-        public virtual async Task Put_ReinitLog_Initializes_Log_Entries()
+        public virtual async Task Put_ReinitLog_Initializes_Log_Entries_And_Returns_State_Changes()
         {
             //var dateTime = new TestDateTimeService
             //{

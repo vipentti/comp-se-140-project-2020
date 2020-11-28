@@ -12,5 +12,7 @@ namespace APIGateway.Features.States
         Task ClearRunLogEntries();
 
         Task WriteEntry(RunLogEntry entry);
+
+        Task WriteStateChange(RunLogEntry entry);
     }
 }

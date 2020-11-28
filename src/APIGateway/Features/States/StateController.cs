@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace APIGateway.Features.States
     {
         private readonly IStateService stateService;
         private readonly IRunLogService runLogService;
+        private readonly IDateTimeService dateTime;
 
-        public StateController(IStateService stateService, IRunLogService runLogService)
+        public StateController(IStateService stateService, IRunLogService runLogService, IDateTimeService dateTime)
         {
             this.stateService = stateService;
             this.runLogService = runLogService;
+            this.dateTime = dateTime;
         }
 
         [HttpGet]
@@ -35,6 +38,7 @@ namespace APIGateway.Features.States
         public async Task<ActionResult<ApplicationState>> SetCurrentState([FromBody] ApplicationState state)
         {
             _ = await stateService.SetCurrentState(state);
+            await runLogService.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
             return state;
         }
 
@@ -58,6 +62,8 @@ namespace APIGateway.Features.States
             await runLogService.ClearRunLogEntries();
 
             _ = await stateService.SetCurrentState(state);
+            //await runLogService.WriteEntry(new RunLogEntry(dateTime.UtcNow, state));
+            await runLogService.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
 
             var entries = await runLogService.GetRunLogEntries();
             return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));

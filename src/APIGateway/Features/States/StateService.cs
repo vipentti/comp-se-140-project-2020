@@ -56,7 +56,7 @@ namespace APIGateway.Features.States
             if (previous != state || shouldInit)
             {
                 shouldInit = false;
-                await runLog.WriteEntry(new RunLogEntry(dateTime.UtcNow, currentState));
+                //await runLog.WriteEntry(new RunLogEntry(dateTime.UtcNow, currentState));
             }
 
             return previous;

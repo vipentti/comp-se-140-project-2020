@@ -70,18 +70,16 @@ namespace E2E.Tests.APIGatewayTests
         public override Task Get_RunLog_Returns_Log() => base.Get_RunLog_Returns_Log();
 
         [E2EFact]
-        public override Task Put_ReinitLog_Initializes_Log_Entries() => base.Put_ReinitLog_Initializes_Log_Entries();
+        public override Task Put_ReinitLog_Initializes_Log_Entries_And_Returns_State_Changes() => base.Put_ReinitLog_Initializes_Log_Entries_And_Returns_State_Changes();
     }
 
     public class RunLogTests : TestBase
     {
-        private readonly APIOptions options;
-
-        private string Endpoint => $"{options.ApiGatewayUrl}/run-log";
+        private string Endpoint => $"/run-log";
 
         public RunLogTests() : base()
         {
-            options = Configuration.Get<APIOptions>();
+            //options = Configuration.Get<APIOptions>();
         }
 
         [E2EFact]

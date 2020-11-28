@@ -13,17 +13,10 @@ namespace E2E.Tests.APIGatewayTests
 
     public class MessagesTests : TestBase
     {
-        private readonly ApiGatewayOptions options;
-
-        public MessagesTests() : base()
-        {
-            options = Configuration.Get<ApiGatewayOptions>();
-        }
-
         [E2EFact]
         public async Task Messages_Returns_OK_Response()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{options.ApiGatewayUrl}/messages");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"/messages");
 
             using HttpResponseMessage response = await SendRequest(request);
 

@@ -1,3 +1,4 @@
+using APIGateway;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -40,6 +41,7 @@ namespace E2E.Tests
 
             var client = factory.CreateClient();
             client.Timeout = TimeSpan.FromSeconds(5);
+            client.BaseAddress = new Uri(Configuration.Get<APIOptions>().ApiGatewayUrl);
 
             return await client.SendAsync(request);
         }

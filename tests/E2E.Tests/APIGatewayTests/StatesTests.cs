@@ -11,14 +11,7 @@ namespace E2E.Tests.APIGatewayTests
 {
     public class StatesTests : TestBase, IAsyncLifetime
     {
-        private readonly APIOptions options;
-
-        private string Endpoint => $"{options.ApiGatewayUrl}/state";
-
-        public StatesTests() : base()
-        {
-            options = Configuration.Get<APIOptions>();
-        }
+        private string Endpoint => $"/state";
 
         public async Task InitializeAsync()
         {
