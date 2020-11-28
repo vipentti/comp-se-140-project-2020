@@ -30,6 +30,8 @@ namespace E2E.Tests
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }
 
+        private readonly Guid sessionId = Guid.NewGuid();
+
         // optionally configure extra services in derived classes
         protected virtual void ConfigureServices(IServiceCollection services)
         {
@@ -42,6 +44,7 @@ namespace E2E.Tests
             var client = factory.CreateClient();
             client.Timeout = TimeSpan.FromSeconds(5);
             client.BaseAddress = new Uri(Configuration.Get<APIOptions>().ApiGatewayUrl);
+            client.DefaultRequestHeaders.Add("X-Session-Id", sessionId.ToString());
 
             return await client.SendAsync(request);
         }

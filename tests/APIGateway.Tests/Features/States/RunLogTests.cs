@@ -105,11 +105,13 @@ namespace APIGateway.Tests.Features.States
 
             List<RunLogEntry> initialEntries = (await client.GetRunLogEntries("/run-log")).ToList();
 
-            initialEntries.Should().SatisfyRespectively(fst =>
-            {
-                fst.State.Should().Be(ApplicationState.Init);
-                fst.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
-            });
+            initialEntries.Should().BeEmpty();
+
+            //initialEntries.Should().SatisfyRespectively(fst =>
+            //{
+            //    fst.State.Should().Be(ApplicationState.Init);
+            //    fst.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
+            //});
 
             // Initialize entries
             var states = new ApplicationState[]
@@ -154,6 +156,7 @@ namespace APIGateway.Tests.Features.States
 
     public class RunLogTests : RunLogTestBase, IClassFixture<APIGatewayAppFactory>
     {
+        private readonly Guid testId = System.Guid.NewGuid();
         private readonly APIGatewayAppFactory factory;
         protected override string endpoint { get; } = "/run-log";
 
@@ -183,6 +186,8 @@ namespace APIGateway.Tests.Features.States
                     // Services...
                     services.AddSingleton(_ => dateTime);
                 }).CreateClient();
+
+                _client.DefaultRequestHeaders.Add("X-Session-Id", testId.ToString());
 
                 return _client;
             }

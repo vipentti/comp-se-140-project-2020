@@ -7,13 +7,13 @@ namespace APIGateway.Features.States
     public class StateService : IStateService
     {
         private readonly SemaphoreSlim stateSemaphore = new SemaphoreSlim(1);
-        private readonly IRunLogService runLog;
-        private readonly IDateTimeService dateTime;
+        //private readonly IRunLogService runLog;
+        //private readonly IDateTimeService dateTime;
 
-        public StateService(IRunLogService runLog, IDateTimeService dateTime)
+        public StateService()
         {
-            this.runLog = runLog;
-            this.dateTime = dateTime;
+            //this.runLog = runLog;
+            //this.dateTime = dateTime;
         }
 
         private ApplicationState currentState = ApplicationState.Init;
@@ -53,11 +53,11 @@ namespace APIGateway.Features.States
             }
 
             // If we changed states
-            if (previous != state || shouldInit)
-            {
-                shouldInit = false;
-                //await runLog.WriteEntry(new RunLogEntry(dateTime.UtcNow, currentState));
-            }
+            //if (previous != state || shouldInit)
+            //{
+            //    shouldInit = false;
+            //    //await runLog.WriteEntry(new RunLogEntry(dateTime.UtcNow, currentState));
+            //}
 
             return previous;
         }

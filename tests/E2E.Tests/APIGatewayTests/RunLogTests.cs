@@ -55,6 +55,7 @@ namespace E2E.Tests.APIGatewayTests
 
                 _client = ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
                 _client.BaseAddress = new Uri(options.ApiGatewayUrl);
+                _client.DefaultRequestHeaders.Add("X-Session-Id", System.Guid.NewGuid().ToString());
                 return _client;
             }
         }

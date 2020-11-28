@@ -29,6 +29,8 @@ namespace APIGateway
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             // Register custom formatters for Enumertion types
             services.AddMvcCore(opts =>
             {
@@ -44,7 +46,7 @@ namespace APIGateway
 
             services.AddTransient<IDateTimeService, DateTimeService>();
 
-            services.AddSingleton<IStateService, StateService>();
+            services.AddSingleton<IStateService, SessionStateService>();
             services.AddSingleton<IRunLogService, InMemoryRunLogService>();
 
             services.Configure<APIOptions>(Configuration);
