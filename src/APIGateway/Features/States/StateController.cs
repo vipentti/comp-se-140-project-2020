@@ -11,14 +11,10 @@ namespace APIGateway.Features.States
     public class StateController : ControllerBase
     {
         private readonly IStateService stateService;
-        //private readonly IRunLogService runLogService;
-        //private readonly IDateTimeService dateTime;
 
         public StateController(IStateService stateService)
         {
             this.stateService = stateService;
-            //this.runLogService = runLogService;
-            //this.dateTime = dateTime;
         }
 
         [HttpGet]
@@ -38,7 +34,6 @@ namespace APIGateway.Features.States
         public async Task<ActionResult<ApplicationState>> SetCurrentState([FromBody] ApplicationState state)
         {
             _ = await stateService.SetCurrentState(state);
-            //await runLogService.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
             return state;
         }
 
@@ -48,7 +43,6 @@ namespace APIGateway.Features.States
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<string>> GetRunLog()
         {
-            //var entries = await runLogService.GetRunLogEntries();
             var entries = await stateService.GetRunLogEntries();
             return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
         }
@@ -63,11 +57,9 @@ namespace APIGateway.Features.States
             await stateService.ClearRunLogEntries();
 
             _ = await stateService.SetCurrentState(state);
-            //await runLogService.WriteEntry(new RunLogEntry(dateTime.UtcNow, state));
-            //await runLogService.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
 
-            //var entries = await runLogService.GetRunLogEntries();
             var entries = await stateService.GetRunLogEntries();
+
             return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
         }
     }

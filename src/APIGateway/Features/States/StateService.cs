@@ -18,7 +18,6 @@ namespace APIGateway.Features.States
         }
 
         private ApplicationState currentState = ApplicationState.Init;
-        private bool shouldInit = true;
 
         public async Task<ApplicationState> GetCurrentState()
         {
@@ -53,20 +52,13 @@ namespace APIGateway.Features.States
                 stateSemaphore.Release();
             }
 
-            await this.runLog.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
-
-            // If we changed states
-            //if (previous != state || shouldInit)
-            //{
-            //    shouldInit = false;
-            //    //await runLog.WriteEntry(new RunLogEntry(dateTime.UtcNow, currentState));
-            //}
+            await runLog.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
 
             return previous;
         }
 
-        public Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => this.runLog.GetRunLogEntries();
+        public async Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => await runLog.GetRunLogEntries();
 
-        public Task ClearRunLogEntries() => this.runLog.ClearRunLogEntries();
+        public async Task ClearRunLogEntries() => await runLog.ClearRunLogEntries();
     }
 }

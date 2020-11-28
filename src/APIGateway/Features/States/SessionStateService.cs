@@ -1,10 +1,7 @@
 ﻿using Common;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
@@ -34,13 +31,6 @@ namespace APIGateway.Features.States
         public Task<ApplicationState> GetCurrentState()
         {
             var sessionId = GetSessionId();
-
-            //if (!stateServices.ContainsKey(sessionId))
-            //{
-            //    stateServices.TryAdd(sessionId, new StateService());
-            //}
-
-            //return stateServices[sessionId].GetCurrentState();
             return GetService(sessionId).StateService.GetCurrentState();
         }
 
@@ -49,7 +39,6 @@ namespace APIGateway.Features.States
             var sessionId = GetSessionId();
 
             await GetService(sessionId).StateService.SetCurrentState(state);
-            //await GetService(sessionId).RunLog.WriteStateChange(new RunLogEntry(dateTime.UtcNow, state));
 
             return state;
         }
@@ -74,7 +63,6 @@ namespace APIGateway.Features.States
             if (context is null)
             {
                 return "default";
-                //throw new ArgumentNullException(nameof(context));
             }
 
             if (context.Request.Headers.TryGetValue("X-Session-Id", out var session))
@@ -83,7 +71,6 @@ namespace APIGateway.Features.States
             }
 
             return "default";
-            //throw new InvalidOperationException("Missing X-Session-Id header");
         }
 
         public Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => GetService(GetSessionId()).StateService.GetRunLogEntries();

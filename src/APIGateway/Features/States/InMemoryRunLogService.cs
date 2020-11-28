@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,18 +7,11 @@ namespace APIGateway.Features.States
 {
     public class InMemoryRunLogService : IRunLogService
     {
-        //private readonly ConcurrentBag<RunLogEntry> runLogEntries = new();
-        //private readonly ConcurrentDictionary<int, RunLogEntry> runLog = new();
-        //private int currentIndex = 0;
-
         private readonly List<RunLogEntry> logEntries = new();
         private readonly SemaphoreSlim semaphoreSlim = new(1);
 
         public async Task ClearRunLogEntries()
         {
-            //runLogEntries.Clear();
-            //runLog.Clear();
-            //return Task.CompletedTask;
             try
             {
                 await semaphoreSlim.WaitAsync();
@@ -36,8 +25,6 @@ namespace APIGateway.Features.States
 
         public async Task<IEnumerable<RunLogEntry>> GetRunLogEntries()
         {
-            //var items = runLog.ToList().OrderBy(it => it.Key).Select(it => it.Value).ToList();
-            //return Task.FromResult<IEnumerable<RunLogEntry>>(items);
             try
             {
                 await semaphoreSlim.WaitAsync();
@@ -67,21 +54,6 @@ namespace APIGateway.Features.States
             {
                 semaphoreSlim.Release();
             }
-            //runLogEntries.Add(entry);
-            ////var count = runLog.Count;
-            //var thisIndex = Interlocked.Increment(ref currentIndex) - 1;
-            ////var thisIndex = currentIndex;
-
-            ////Interlocked.Increment(ref currentIndex);
-
-            //runLog[thisIndex] = entry;
-
-            ////if (!runLog.TryAdd(thisIndex - 1, entry))
-            ////{
-            ////    throw new InvalidOperationException($"Failed to add entry {entry}");
-            ////}
-
-            //return Task.CompletedTask;
         }
 
         public async Task WriteStateChange(RunLogEntry entry)
