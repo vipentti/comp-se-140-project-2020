@@ -1,5 +1,6 @@
 
 using APIGateway.Features.Messages;
+using APIGateway.Features.States;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,10 @@ namespace APIGateway
                 svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
             });
             services.AddTransient<MessagesHandler>();
+            services.AddTransient<StateGetHandler>();
+            services.AddTransient<StatePutHandler>();
+
+            services.AddSingleton<IStateService, StateService>();
 
             services.Configure<APIOptions>(Configuration);
         }
