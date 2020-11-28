@@ -16,6 +16,7 @@ namespace APIGateway.Tests.Features.States
     {
         protected abstract HttpClient client { get; }
         protected abstract string endpoint { get; }
+        protected abstract IDateTimeService dateTime { get; }
 
         [Fact]
         public virtual async Task Get_RunLog_Returns_Success_StatusCode()
@@ -37,10 +38,10 @@ namespace APIGateway.Tests.Features.States
         {
             // Arrange
 
-            var dateTime = new TestDateTimeService
-            {
-                UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
-            };
+            //var dateTime = new TestDateTimeService
+            //{
+            //    UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
+            //};
 
             var state = ApplicationState.Init;
 
@@ -89,10 +90,10 @@ namespace APIGateway.Tests.Features.States
         [Fact]
         public virtual async Task Put_ReinitLog_Initializes_Log_Entries()
         {
-            var dateTime = new TestDateTimeService
-            {
-                UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
-            };
+            //var dateTime = new TestDateTimeService
+            //{
+            //    UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
+            //};
 
             var clearResponse = await client.PutStringContent("/reinit-log", ApplicationState.Init);
             clearResponse.EnsureSuccessStatusCode();
@@ -102,7 +103,7 @@ namespace APIGateway.Tests.Features.States
             initialEntries.Should().SatisfyRespectively(fst =>
             {
                 fst.State.Should().Be(ApplicationState.Init);
-                fst.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(DateTime.UtcNow.AddHours(1));
+                fst.Timestamp.Should().BeWithin(TimeSpan.FromSeconds(5)).Before(dateTime.UtcNow);
             });
 
             // Initialize entries
@@ -118,6 +119,11 @@ namespace APIGateway.Tests.Features.States
     {
         private readonly APIGatewayAppFactory factory;
         protected override string endpoint { get; } = "/run-log";
+
+        protected override IDateTimeService dateTime => new TestDateTimeService()
+        {
+            UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
+        };
 
         public RunLogTests(APIGatewayAppFactory factory)
         {
@@ -135,15 +141,10 @@ namespace APIGateway.Tests.Features.States
                     return _client;
                 }
 
-                var dateTime = new TestDateTimeService
-                {
-                    UtcNow = new System.DateTime(2020, 11, 26, 11, 30, 45),
-                };
-
                 _client = factory.WithTestServices(services =>
                 {
                     // Services...
-                    services.AddSingleton<IDateTimeService, TestDateTimeService>(_ => dateTime);
+                    services.AddSingleton(_ => dateTime);
                 }).CreateClient();
 
                 return _client;

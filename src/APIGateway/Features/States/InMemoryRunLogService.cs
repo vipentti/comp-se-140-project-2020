@@ -9,7 +9,20 @@ namespace APIGateway.Features.States
     {
         private readonly ConcurrentBag<RunLogEntry> runLogEntries = new();
 
+        public Task ClearRunLogEntries()
+        {
+            runLogEntries.Clear();
+            return Task.CompletedTask;
+        }
+
         public Task<IEnumerable<RunLogEntry>> GetRunLogEntries() => Task.FromResult<IEnumerable<RunLogEntry>>(runLogEntries.ToList());
+
+        public Task<IEnumerable<RunLogEntry>> ReinitRunLog(RunLogEntry entry)
+        {
+            runLogEntries.Clear();
+            runLogEntries.Add(entry);
+            return GetRunLogEntries();
+        }
 
         public Task WriteEntry(RunLogEntry entry)
         {

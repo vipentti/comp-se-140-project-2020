@@ -47,5 +47,20 @@ namespace APIGateway.Features.States
             var entries = await runLogService.GetRunLogEntries();
             return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
         }
+
+        [HttpPut]
+        [Route("/reinit-log")]
+        [Produces("text/plain")]
+        [Consumes("text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> ReinitRunLog([FromBody] ApplicationState state)
+        {
+            await runLogService.ClearRunLogEntries();
+
+            _ = await stateService.SetCurrentState(state);
+
+            var entries = await runLogService.GetRunLogEntries();
+            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
+        }
     }
 }

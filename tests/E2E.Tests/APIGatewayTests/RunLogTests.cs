@@ -1,6 +1,7 @@
 using APIGateway;
 using APIGateway.Features.States;
 using APIGateway.Tests.Features.States;
+using Common;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,9 +42,26 @@ namespace E2E.Tests.APIGatewayTests
             options = Configuration.Get<APIOptions>();
         }
 
-        protected override HttpClient client => ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+        private HttpClient _client;
 
-        protected override string endpoint => $"{options.ApiGatewayUrl}/run-log";
+        protected override HttpClient client
+        {
+            get
+            {
+                if (_client is not null)
+                {
+                    return _client;
+                }
+
+                _client = ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+                _client.BaseAddress = new Uri(options.ApiGatewayUrl);
+                return _client;
+            }
+        }
+
+        protected override string endpoint => "/run-log";
+
+        protected override IDateTimeService dateTime => new DateTimeService();
 
         [E2EFact]
         public override Task Get_RunLog_Returns_Success_StatusCode() => base.Get_RunLog_Returns_Success_StatusCode();
