@@ -3,6 +3,7 @@ using APIGateway.Features.States;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -50,6 +51,46 @@ namespace E2E.Tests.APIGatewayTests
                 .ToList();
 
             entries.Should().HaveCountGreaterOrEqualTo(1);
+        }
+
+        [E2EFact]
+        public async Task Put_State_Updates_RunLog()
+        {
+            // Get initial entries
+            var originalEntries = await GetLogEntries();
+
+            var nextState = ApplicationState.Paused;
+
+            var response = await PutRequest("/state", new StringContent(nextState.ToString()));
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            content.Should().Be(nextState.ToString());
+
+            var newEntries = await GetLogEntries();
+        }
+
+        private async Task<List<RunLogEntry>> GetLogEntries()
+        {
+            var response = await GetRequest(Endpoint);
+
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().NotBeNull();
+
+            return ReadEntriesFrom(content);
+        }
+
+        public static List<RunLogEntry> ReadEntriesFrom(string content)
+        {
+            List<RunLogEntry> entries = content
+                .Split(System.Environment.NewLine, System.StringSplitOptions.RemoveEmptyEntries)
+                .Select(RunLogEntry.FromString)
+                .ToList();
+
+            return entries;
         }
     }
 }

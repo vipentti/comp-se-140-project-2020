@@ -43,5 +43,23 @@ namespace E2E.Tests
 
             return await client.SendAsync(request);
         }
+
+        protected async Task<HttpResponseMessage> GetRequest(string endpoint)
+        {
+            return await SendRequest(new HttpRequestMessage(method: HttpMethod.Get, requestUri: endpoint));
+        }
+
+        protected async Task<HttpResponseMessage> PutRequest(string endpoint, HttpContent content)
+        {
+            return await SendRequest(new HttpRequestMessage(method: HttpMethod.Put, requestUri: endpoint)
+            {
+                Content = content
+            });
+        }
+
+        protected Task<HttpResponseMessage> PutStringRequest<T>(string endpoint, T content)
+        {
+            return PutRequest(endpoint, new StringContent(content.ToString()));
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace APIGateway.Tests
         [InlineData("/messages")]
         [InlineData("/state")]
         [InlineData("/run-log")]
+        [InlineData("/reinit-log")]
         public async Task Get_Endpoint_Returns_Success_StatusCode(string endpoint)
         {
             // Arrange
