@@ -69,7 +69,8 @@ namespace APIGateway
                 EndpointConfigureDelegate configureRoute =
                     route.Method switch {
                         HttpMethod it when it == HttpMethod.Put => EndpointRouteBuilderExtensions.MapPut,
-                        _ => EndpointRouteBuilderExtensions.MapGet
+                        HttpMethod it when it == HttpMethod.Get => EndpointRouteBuilderExtensions.MapGet,
+                        _ => throw new NotImplementedException($"Routing support for '{route.Method}' is not implemented"),
                     };
 
                 configureRoute(endpoints, route.Pattern, route.Handle);

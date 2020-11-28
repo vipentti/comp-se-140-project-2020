@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using APIGateway.Features.States;
 
-namespace APIGateway.Tests.Features.Messages
+namespace APIGateway.Tests.Features.States
 {
     public class StateTests : IClassFixture<APIGatewayAppFactory>
     {
