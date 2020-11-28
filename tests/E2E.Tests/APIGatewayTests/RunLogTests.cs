@@ -1,7 +1,10 @@
 using APIGateway;
 using APIGateway.Features.States;
+using APIGateway.Tests.Features.States;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,6 +14,47 @@ using System.Threading.Tasks;
 
 namespace E2E.Tests.APIGatewayTests
 {
+    public class RunLogEndToEndTests : RunLogTestBase
+    {
+        private readonly APIOptions options;
+
+        protected IConfigurationRoot Configuration { get; }
+
+        protected IServiceProvider ServiceProvider { get; }
+
+        public RunLogEndToEndTests()
+        {
+            var configBuilder = new ConfigurationBuilder();
+
+            Common.ProgramCommon.ConfigureApplication(configBuilder);
+
+            Configuration = configBuilder.Build();
+
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddHttpClient();
+
+            // ConfigureServices(serviceCollection);
+
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+
+            options = Configuration.Get<APIOptions>();
+        }
+
+        protected override HttpClient client => ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+
+        protected override string endpoint => $"{options.ApiGatewayUrl}/run-log";
+
+        [E2EFact]
+        public override Task Get_RunLog_Returns_Success_StatusCode() => base.Get_RunLog_Returns_Success_StatusCode();
+
+        [E2EFact]
+        public override Task Get_RunLog_Returns_Log() => base.Get_RunLog_Returns_Log();
+
+        [E2EFact]
+        public override Task Put_ReinitLog_Initializes_Log_Entries() => base.Put_ReinitLog_Initializes_Log_Entries();
+    }
+
     public class RunLogTests : TestBase
     {
         private readonly APIOptions options;

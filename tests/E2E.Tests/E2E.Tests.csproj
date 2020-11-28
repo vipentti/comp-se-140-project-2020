@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\APIGateway\APIGateway.csproj" />
+    <ProjectReference Include="..\APIGateway.Tests\APIGateway.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
