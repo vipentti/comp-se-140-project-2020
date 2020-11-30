@@ -1,4 +1,6 @@
 using Common.Enumerations;
+using Common.RedisSupport;
+using Common.States;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -111,7 +113,7 @@ namespace Common
                 .AddEnvironmentVariables();
         }
 
-        public static void ConfigureCommonServices(IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureCommonServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<RabbitClient>();
             services.AddTransient<IRabbitClient, RabbitClient>();
@@ -119,6 +121,13 @@ namespace Common
 
             // Register FileSystem
             services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddSingleton<IRedisClient, RedisClient>();
+            services.AddSingleton<ISharedStateService, SharedStateService>();
+            services.AddSingleton<ISessionService, DefaultSessionService>();
+
+            services.AddSingleton<RedisStateService>();
+            services.AddSingleton<IReadonlyStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            services.AddSingleton<IStateService>(cont => cont.GetRequiredService<RedisStateService>());
 
             services.Configure<RabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.Configure<CommonOptions>(configuration);

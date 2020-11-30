@@ -23,6 +23,7 @@ namespace APIGateway
                 {
                     var stateService = scope.ServiceProvider.GetRequiredService<IStateService>();
 
+                    await stateService.ClearRunLogEntries();
                     await stateService.SetCurrentState(ApplicationState.Init);
                 }
 

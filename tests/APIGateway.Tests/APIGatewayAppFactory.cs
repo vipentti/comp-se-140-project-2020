@@ -1,9 +1,8 @@
 using APIGateway.Features.Messages;
+using APIGateway.Features.States;
 using APIGateway.Tests.Features.Messages;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 
 namespace APIGateway.Tests
 {
@@ -11,16 +10,10 @@ namespace APIGateway.Tests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            // base.ConfigureWebHost(builder);
             builder.ConfigureServices(services =>
             {
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                        typeof(IMessageService));
-
-                services.Remove(descriptor);
-
-                services.AddTransient<IMessageService, TestMessageService>();
+                services.ReplaceTransient<IMessageService, TestMessageService>();
+                services.ReplaceSingleton<IStateService, SessionStateService>();
             });
         }
     }

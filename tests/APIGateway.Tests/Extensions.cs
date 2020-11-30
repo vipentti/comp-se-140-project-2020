@@ -52,6 +52,32 @@ namespace APIGateway.Tests
                 .ToList();
         }
 
+        public static void ReplaceTransient<TInterface, TImplementation>(this IServiceCollection services)
+            where TInterface : class
+            where TImplementation : class, TInterface
+        {
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType ==
+                    typeof(TInterface));
+
+            services.Remove(descriptor);
+
+            services.AddTransient<TInterface, TImplementation>();
+        }
+
+        public static void ReplaceSingleton<TInterface, TImplementation>(this IServiceCollection services)
+            where TInterface : class
+            where TImplementation : class, TInterface
+        {
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType ==
+                    typeof(TInterface));
+
+            services.Remove(descriptor);
+
+            services.AddSingleton<TInterface, TImplementation>();
+        }
+
         public static void SetupMockServices(this IServiceCollection services, Mock<IOriginalService> originalServiceMock = default)
         {
             var descriptor = services.SingleOrDefault(

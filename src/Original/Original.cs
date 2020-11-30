@@ -8,10 +8,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Common.RedisSupport;
+using Common.States;
 
 namespace Original
 {
-    public class Original : BackgroundService
+    public class Original : BackgroundService, IStateChangeListener
     {
         //public static async Task Main(string[] args)
         //{
@@ -82,6 +83,8 @@ namespace Original
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await sharedState.SubscribeToChanges(this);
+
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 
             await rabbitClient.WaitForRabbitMQ(stoppingToken);
@@ -92,11 +95,11 @@ namespace Original
 
             await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
-            {
-                var sub = await redisClient.GetSubscriber();
-                var channel = await sub.SubscribeAsync("state-change");
-                channel.OnMessage(OnStateChange);
-            }
+            //{
+            //    var sub = await redisClient.GetSubscriber();
+            //    var channel = await sub.SubscribeAsync("state-change");
+            //    channel.OnMessage(OnStateChange);
+            //}
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -113,23 +116,29 @@ namespace Original
             logger.LogInformation("Finished sending messages after {TotalSeconds} seconds", stopWatch.Elapsed.TotalSeconds);
         }
 
-        private async Task OnStateChange(StackExchange.Redis.ChannelMessage channelMessage)
+        public async Task OnStateChange(ApplicationState state)
         {
-            logger.LogInformation("Received state change {Channel} {Message}", channelMessage.Channel, channelMessage.Message);
+            logger.LogInformation("Received state change {@State}", state);
             await Task.Delay(0);
         }
 
+        //private async Task OnStateChange(StackExchange.Redis.ChannelMessage channelMessage)
+        //{
+        //    logger.LogInformation("Received state change {Channel} {Message}", channelMessage.Channel, channelMessage.Message);
+        //    await Task.Delay(0);
+        //}
+
         private readonly ILogger<Original> logger;
         private readonly IRabbitClient rabbitClient;
-        private readonly IRedisClient redisClient;
+        private readonly ISharedStateService sharedState;
         private readonly CommonOptions options;
         private int messageToSend = 1;
         private bool paused = false;
 
-        public Original(IRabbitClient rabbitClient, IRedisClient redisClient, ILogger<Original> logger, IOptions<CommonOptions> options)
+        public Original(IRabbitClient rabbitClient, ISharedStateService sharedState, ILogger<Original> logger, IOptions<CommonOptions> options)
         {
             this.rabbitClient = rabbitClient;
-            this.redisClient = redisClient;
+            this.sharedState = sharedState;
             this.logger = logger;
             this.options = options.Value;
         }

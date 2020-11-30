@@ -1,4 +1,5 @@
-﻿using Common.Enumerations;
+﻿using Common;
+using Common.Enumerations;
 using Common.RedisSupport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -28,9 +29,11 @@ namespace Original
                 opts.InputFormatters.Insert(0, new EnumerationInputFormatter());
             });
 
-            Common.ProgramCommon.ConfigureCommonServices(services, Configuration);
+            // Common.ProgramCommon.ConfigureCommonServices(services, Configuration);
 
-            services.AddSingleton<IRedisClient, RedisClient>();
+            services.ConfigureCommonServices(Configuration);
+
+            //services.AddSingleton<IRedisClient, RedisClient>();
             services.AddSingleton<Original>();
             services.AddHostedService(it => it.GetRequiredService<Original>());
             //var apiOptions = Configuration.Get<APIOptions>();
