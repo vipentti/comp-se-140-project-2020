@@ -42,7 +42,7 @@ while [ "$1" != "" ]; do
                                 ImageAndTag="$1"
                                 ;;
         -a | --build-args )     shift
-                                BuildArgs="$1"
+                                BuildArgs="${1}"
                                 ;;
         -g | --target )         shift
                                 Target="$1"
@@ -67,10 +67,13 @@ if [ "${CacheImageAndTag}" != "" ] ; then
     cacheFrom="--cache-from ${CacheImageAndTag}"
 fi
 
+echo "Building with the following build args:"
+echo "${targetArg} ${BuildArgs}"
+
 docker build \
+    ${BuildArgs} \
     $targetArg \
     $cacheFrom \
-    $BuildArgs \
     -t "${ImageAndTag}" \
     -f "${Dockerfile}" \
     "${BuildContext}"

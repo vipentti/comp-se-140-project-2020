@@ -3,7 +3,7 @@
 param (
     [Parameter()]
     [string]
-    $BuildConfig = "Release",
+    $BuildConfig = "",
 
     [Parameter()]
     [string]
@@ -27,6 +27,18 @@ $InvokeScript = Join-Path -Path $ThisPath "invoke-script.ps1"
 
 if (!(Test-Path $ResultsDirectory)) {
     New-Item -ItemType Directory -Force -Path $ResultsDirectory
+}
+
+if ($BuildConfig.Length -eq 0) {
+    if ("$env:BUILD_CONFIG" -gt 0) {
+        $BuildConfig = "$env:BUILD_CONFIG"
+    }
+    elseif ("$env:ENV_BUILD_CONFIG" -gt 0) {
+        $BuildConfig = "$env:ENV_BUILD_CONFIG"
+    }
+    else {
+        $BuildConfig = "Release"
+    }
 }
 
 $ResultsDirectory = $(Resolve-Path $ResultsDirectory)

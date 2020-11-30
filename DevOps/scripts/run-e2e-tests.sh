@@ -2,12 +2,13 @@
 
 E2E_PROJECT_NAME="${E2E_PROJECT_NAME:-e2e-test}"
 ENV_FILE="${ENV_FILE:-.env.e2e}"
+BUILD_CONFIG="${BUILD_CONFIG:-Release}"
 
 docker-compose --project-name "${E2E_PROJECT_NAME}" down --volumes
 
 script_dir=$(dirname $(readlink -f $0))
 
-/bin/sh "${script_dir}/build-images.sh"
+/bin/sh "${script_dir}/build-images.sh" --build-config "${BUILD_CONFIG}"
 
 if [ ! $? -eq 0 ]; then
     echo "Building containers failed. Exiting."

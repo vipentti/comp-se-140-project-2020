@@ -6,12 +6,14 @@ EnvFile="${3?:EnvFile}"
 TestResultsPath="${4:-$(pwd)/testresults}"
 Tag="${Tag:-latest}"
 ImageAndTag="${5:-builder:latest}"
+BUILD_CONFIG="${BUILD_CONFIG:-Release}"
 
 script_dir=$(dirname $(readlink -f $0))
 
 /bin/sh "${script_dir}/build-docker.sh" \
     --file "Dockerfile" \
     --tag "builder:${Tag}" \
+    --build-args "--build-arg BUILD_CONFIG=${BUILD_CONFIG}" \
     --target "testrunner"
 
 if [ ! $? -eq 0 ]; then
