@@ -90,7 +90,7 @@ namespace APIGateway.Tests.Features.States
                 ApplicationState.Init,
                 ApplicationState.Running,
                 ApplicationState.Paused,
-                ApplicationState.Shutdown,
+                ApplicationState.Running,
             };
 
             foreach (var state in states)
