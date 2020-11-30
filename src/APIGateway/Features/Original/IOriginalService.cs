@@ -1,5 +1,4 @@
-﻿using Common;
-using Refit;
+﻿using Refit;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.Original
@@ -7,12 +6,15 @@ namespace APIGateway.Features.Original
     public interface IOriginalService
     {
         [Put("/start")]
-        Task<ApplicationState> Start();
+        Task<string> Start();
 
         [Put("/stop")]
-        Task<ApplicationState> Stop();
+        Task<string> Stop();
 
         [Put("/reset")]
-        Task<ApplicationState> Reset();
+        Task<string> Reset();
+
+        [Put("/state")]
+        Task<string> SetState(string state);
     }
 }

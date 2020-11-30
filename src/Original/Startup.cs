@@ -25,7 +25,6 @@ namespace Original
         {
             services.AddHttpContextAccessor();
 
-            // Register custom formatters for Enumertion types
             services.AddMvcCore(_ =>
             {
             });

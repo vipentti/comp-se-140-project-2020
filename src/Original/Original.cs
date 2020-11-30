@@ -53,6 +53,32 @@ namespace Original
             messageToSend = 1;
         }
 
+        public void Pause()
+        {
+            logger.LogInformation("Pausing {Name}", nameof(Original));
+            paused = true;
+        }
+
+        public void Resume()
+        {
+            logger.LogInformation("Resuming {Name}", nameof(Original));
+            paused = false;
+        }
+
+        public async override Task StartAsync(CancellationToken cancellationToken)
+        {
+            logger.LogInformation("Starting...");
+            await base.StartAsync(cancellationToken);
+            logger.LogInformation("Start finished");
+        }
+
+        public async override Task StopAsync(CancellationToken cancellationToken)
+        {
+            logger.LogInformation("Stopping...");
+            await base.StopAsync(cancellationToken);
+            logger.LogInformation("Stopped");
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var stopWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -67,6 +93,11 @@ namespace Original
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                if (paused)
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
+                    continue;
+                }
                 rabbitClient.SendMessage($"MSG_{messageToSend}");
                 ++messageToSend;
                 await Task.Delay(options.DelayBetweenMessages, stoppingToken);
@@ -79,6 +110,7 @@ namespace Original
         private readonly IRabbitClient rabbitClient;
         private readonly CommonOptions options;
         private int messageToSend = 1;
+        private bool paused = false;
 
         public Original(IRabbitClient rabbitClient, ILogger<Original> logger, IOptions<CommonOptions> options)
         {

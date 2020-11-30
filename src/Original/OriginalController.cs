@@ -23,8 +23,9 @@ namespace Original
         [Route("/start")]
         public async Task<ActionResult<string>> Start()
         {
-            var source = new CancellationTokenSource(10 * 1000);
-            await instance.StartAsync(source.Token);
+            // await instance.StartAsync(CancellationToken.None);
+            await Task.Delay(0);
+            instance.Resume();
             return ApplicationState.Running.ToString();
         }
 
@@ -32,8 +33,10 @@ namespace Original
         [Route("/stop")]
         public async Task<ActionResult<string>> Stop()
         {
-            var source = new CancellationTokenSource(10 * 1000);
-            await instance.StopAsync(source.Token);
+            //var source = new CancellationTokenSource(10 * 1000);
+            // await instance.StopAsync(CancellationToken.None);
+            await Task.Delay(0);
+            instance.Pause();
             return ApplicationState.Paused.ToString();
         }
 
@@ -41,10 +44,37 @@ namespace Original
         [Route("/reset")]
         public async Task<ActionResult<string>> Reset()
         {
-            await Stop();
+            //await Stop();
+            await Task.Delay(0);
+            instance.Pause();
             instance.Reset();
-            await Start();
+            instance.Resume();
             return ApplicationState.Init.ToString();
+        }
+
+        [HttpPut]
+        [Route("/state")]
+        public async Task<ActionResult<string>> SetState(string state)
+        {
+            switch (ApplicationState.FromName(state))
+            {
+                case var it when it == ApplicationState.Init:
+                {
+                    return await Reset();
+                }
+                case var it when it == ApplicationState.Paused:
+                {
+                    return await Stop();
+                }
+                case var it when it == ApplicationState.Running:
+                {
+                    return await Start();
+                }
+                default:
+                    break;
+            }
+
+            return state;
         }
     }
 }

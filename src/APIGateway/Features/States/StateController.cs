@@ -45,6 +45,12 @@ namespace APIGateway.Features.States
                 }
                 break;
 
+                case ApplicationState it when it == ApplicationState.Running:
+                {
+                    await originalService.Start();
+                }
+                break;
+
                 case var it when it == ApplicationState.Paused:
                 {
                     await originalService.Stop();

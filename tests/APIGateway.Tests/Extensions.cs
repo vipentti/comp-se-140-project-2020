@@ -68,9 +68,9 @@ namespace APIGateway.Tests
         public static Mock<IOriginalService> CreateMockOriginalService()
         {
             var mock = new Mock<IOriginalService>(MockBehavior.Strict);
-            mock.Setup(it => it.Start()).ReturnsAsync(ApplicationState.Init);
-            mock.Setup(it => it.Stop()).ReturnsAsync(ApplicationState.Paused);
-            mock.Setup(it => it.Reset()).ReturnsAsync(ApplicationState.Init);
+            mock.Setup(it => it.Start()).ReturnsAsync(ApplicationState.Init.ToString());
+            mock.Setup(it => it.Stop()).ReturnsAsync(ApplicationState.Paused.ToString());
+            mock.Setup(it => it.Reset()).ReturnsAsync(ApplicationState.Init.ToString());
             return mock;
         }
     }
