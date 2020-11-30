@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Common.RedisSupport;
 using Common.States;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Original
 {
@@ -53,6 +55,13 @@ namespace Original
         public void Reset()
         {
             messageToSend = 1;
+        }
+
+        public void Init()
+        {
+            Pause();
+            Reset();
+            Resume();
         }
 
         public void Pause()
@@ -120,6 +129,18 @@ namespace Original
         {
             logger.LogInformation("Received state change {@State}", state);
             await Task.Delay(0);
+
+            var handlers = new Dictionary<ApplicationState, Action>()
+            {
+                { ApplicationState.Paused, Pause },
+                { ApplicationState.Running, Resume },
+                { ApplicationState.Init,  Init },
+            };
+
+            if (handlers.ContainsKey(state))
+            {
+                handlers[state]();
+            }
         }
 
         //private async Task OnStateChange(StackExchange.Redis.ChannelMessage channelMessage)

@@ -43,14 +43,14 @@ namespace APIGateway.Features.States
         {
             _ = await stateService.SetCurrentState(state);
 
-            try
-            {
-                await originalService.SetState(state);
-            }
-            catch (HttpRequestException ex)
-            {
-                logger.LogWarning("Failed to set original state {@Exception}", ex);
-            }
+            //try
+            //{
+            //    await originalService.SetState(state);
+            //}
+            //catch (HttpRequestException ex)
+            //{
+            //    logger.LogWarning("Failed to set original state {@Exception}", ex);
+            //}
 
             return state;
         }
@@ -76,14 +76,14 @@ namespace APIGateway.Features.States
 
             _ = await stateService.SetCurrentState(state);
 
-            try
-            {
-                await originalService.SetState(state);
-            }
-            catch (HttpRequestException ex)
-            {
-                logger.LogWarning("Failed to set original state {@Exception}", ex);
-            }
+            //try
+            //{
+            //    await originalService.SetState(state);
+            //}
+            //catch (HttpRequestException ex)
+            //{
+            //    logger.LogWarning("Failed to set original state {@Exception}", ex);
+            //}
 
             var entries = await stateService.GetRunLogEntries();
 
