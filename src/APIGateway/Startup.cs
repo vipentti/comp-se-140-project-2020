@@ -58,6 +58,7 @@ namespace APIGateway
             services.AddSingleton<ISessionService, SessionService>();
 
             services.AddStateServices();
+            services.AddHostedService<InitListener>();
             //services.AddSingleton<IRedisClient, RedisClient>();
 
             //// services.AddSingleton<IStateService, SessionStateService>();
