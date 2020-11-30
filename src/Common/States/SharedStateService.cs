@@ -38,7 +38,7 @@ namespace Common.States
             }
 
             var sub = await redisClient.GetSubscriber();
-            var channel = await sub.SubscribeAsync("state-change");
+            var channel = await sub.SubscribeAsync(RedisStateService.StateChangeChannel);
             channel.OnMessage(async (channelMessage) =>
             {
                 var state = ApplicationState.FromName(channelMessage.Message);

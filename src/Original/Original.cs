@@ -143,12 +143,6 @@ namespace Original
             }
         }
 
-        //private async Task OnStateChange(StackExchange.Redis.ChannelMessage channelMessage)
-        //{
-        //    logger.LogInformation("Received state change {Channel} {Message}", channelMessage.Channel, channelMessage.Message);
-        //    await Task.Delay(0);
-        //}
-
         private readonly ILogger<Original> logger;
         private readonly IRabbitClient rabbitClient;
         private readonly ISharedStateService sharedState;

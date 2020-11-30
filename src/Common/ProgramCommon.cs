@@ -113,6 +113,16 @@ namespace Common
                 .AddEnvironmentVariables();
         }
 
+        public static void AddStateServices(this IServiceCollection services)
+        {
+            services.AddSingleton<RedisStateService>();
+            services.AddSingleton<IReadonlyStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            services.AddSingleton<IStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            services.AddSingleton<IRedisClient, RedisClient>();
+            services.AddSingleton<ISharedStateService, SharedStateService>();
+            services.AddHostedService<ShutdownListener>();
+        }
+
         public static void ConfigureCommonServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<RabbitClient>();
@@ -121,16 +131,19 @@ namespace Common
 
             // Register FileSystem
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<IRedisClient, RedisClient>();
-            services.AddSingleton<ISharedStateService, SharedStateService>();
             services.AddSingleton<ISessionService, DefaultSessionService>();
 
-            services.AddSingleton<RedisStateService>();
-            services.AddSingleton<IReadonlyStateService>(cont => cont.GetRequiredService<RedisStateService>());
-            services.AddSingleton<IStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            //services.AddSingleton<RedisStateService>();
+            //services.AddSingleton<IReadonlyStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            //services.AddSingleton<IStateService>(cont => cont.GetRequiredService<RedisStateService>());
+            //services.AddSingleton<IRedisClient, RedisClient>();
+            //services.AddSingleton<ISharedStateService, SharedStateService>();
 
             services.Configure<RabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.Configure<CommonOptions>(configuration);
+
+            //services.AddHostedService<ShutdownListener>();
+            services.AddStateServices();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args, Action<IServiceCollection> configureServices) =>
@@ -139,6 +152,9 @@ namespace Common
                 .ConfigureAppConfiguration(ConfigureApplication)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    configureServices(services);
+                    services.ConfigureCommonServices(hostContext.Configuration);
+                    /*
                     services.AddTransient<RabbitClient>();
                     services.AddTransient<IRabbitClient, RabbitClient>();
                     services.AddTransient<IDateTimeService, DateTimeService>();
@@ -152,6 +168,7 @@ namespace Common
 
                     services.Configure<RabbitMQOptions>(config.GetSection("RabbitMQ"));
                     services.Configure<CommonOptions>(config);
+                    */
                 });
     }
 }

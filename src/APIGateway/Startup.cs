@@ -55,13 +55,14 @@ namespace APIGateway
                 });
 
             services.AddTransient<IDateTimeService, DateTimeService>();
-            services.AddSingleton<IRedisClient, RedisClient>();
-
-            // services.AddSingleton<IStateService, SessionStateService>();
-
             services.AddSingleton<ISessionService, SessionService>();
-            services.AddSingleton<IStateService, RedisStateService>();
-            services.AddSingleton<IRunLogService, InMemoryRunLogService>();
+
+            services.AddStateServices();
+            //services.AddSingleton<IRedisClient, RedisClient>();
+
+            //// services.AddSingleton<IStateService, SessionStateService>();
+            //services.AddSingleton<IStateService, RedisStateService>();
+            //services.AddSingleton<IRunLogService, InMemoryRunLogService>();
 
             services.Configure<APIOptions>(Configuration);
         }
