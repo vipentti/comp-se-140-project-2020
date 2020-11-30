@@ -64,11 +64,11 @@ TargetProject=""
 docker-compose config --services | while read line ; do
     echo === $line ===
 
-    if [ "${line}" != "builder" ] && [  "${line}" != "rabbitmq" ]; then
+    TargetProject="$(
+        "${script_dir}/get-target-project.sh" "${line}"
+    )"
 
-        TargetProject=$(
-            "${script_dir}/get-target-project.sh" "${line}"
-        )
+    if [  "${TargetProject}" != "" ] ; then
 
         /bin/sh "${script_dir}/build-docker.sh" \
                 --file "Dockerfile" \
@@ -81,10 +81,10 @@ docker-compose config --services | while read line ; do
 done
 
 docker-compose config --services | while read line ; do
-    if [ "${line}" != "builder" ] && [  "${line}" != "rabbitmq" ]; then
-        TargetProject=$(
-            "${script_dir}/get-target-project.sh" "${line}"
-        )
+    TargetProject="$(
+        "${script_dir}/get-target-project.sh" "${line}"
+    )"
+    if [ "${targetProject}" != "" ] ; then
         echo === Built $line $TargetProject ===
     fi
 done
