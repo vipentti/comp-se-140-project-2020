@@ -30,6 +30,8 @@ namespace HttpServer.Tests
             _fileMock.Setup(it => it.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<System.Text.Encoding>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync("test content");
 
+            _fileMock.Setup(it => it.Exists(It.IsAny<string>())).Returns(true);
+
             _fileSystemMock.Setup(it => it.File).Returns(_fileMock.Object);
 
             _hostBuilder = new HostBuilder()

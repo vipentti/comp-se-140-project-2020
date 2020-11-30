@@ -71,6 +71,7 @@ namespace APIGateway.Tests
             mock.Setup(it => it.Start()).ReturnsAsync(ApplicationState.Running);
             mock.Setup(it => it.Stop()).ReturnsAsync(ApplicationState.Paused);
             mock.Setup(it => it.Reset()).ReturnsAsync(ApplicationState.Init);
+            mock.Setup(it => it.SetState(It.IsAny<ApplicationState>())).ReturnsAsync(ApplicationState.Init);
             return mock;
         }
     }

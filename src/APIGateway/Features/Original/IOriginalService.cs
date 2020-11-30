@@ -27,7 +27,7 @@ namespace APIGateway.Features.Original
         {
             if (!typeof(T).IsImplementationOf(typeof(Enumeration)))
             {
-                throw new InvalidOperationException($"Unsupported content type {content}");
+                throw new InvalidOperationException($"Unsupported content type {typeof(T)} {content}");
             }
 
             string contentString = await content.ReadAsStringAsync();
@@ -39,14 +39,9 @@ namespace APIGateway.Features.Original
 
         public Task<HttpContent> SerializeAsync<T>(T item)
         {
-            if (!typeof(T).IsImplementationOf(typeof(Enumeration)))
-            {
-                throw new InvalidOperationException($"Unsupported content type {item}");
-            }
-
             if (item is not Enumeration enumeration)
             {
-                throw new InvalidOperationException($"Unsupported content type {item}");
+                throw new InvalidOperationException($"Item is not enumeration {item} {typeof(T)}");
             }
 
             return Task.FromResult<HttpContent>(new StringContent(enumeration.Name));
