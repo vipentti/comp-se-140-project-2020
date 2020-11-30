@@ -1,4 +1,5 @@
 ﻿using Common.Enumerations;
+using Common.RedisSupport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ namespace Original
 
             Common.ProgramCommon.ConfigureCommonServices(services, Configuration);
 
+            services.AddSingleton<IRedisClient, RedisClient>();
             services.AddSingleton<Original>();
             services.AddHostedService(it => it.GetRequiredService<Original>());
             //var apiOptions = Configuration.Get<APIOptions>();

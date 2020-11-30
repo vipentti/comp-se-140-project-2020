@@ -98,6 +98,8 @@ services:
       args:
         - TargetProject=APIGateway
 
+    command: ["./wait-for-tcp.sh", "redis", "6379", "--", "./entry.sh"]
+
     environment:
       << : *common-env-config
       OutFilePath: /app/shared_volume/message.txt
@@ -107,6 +109,9 @@ services:
 
     networks:
       - backend
+
+    depends_on:
+      - redis
 
   rabbitmq:
     restart: unless-stopped
@@ -129,8 +134,22 @@ services:
     networks:
       - backend
 
+  redis:
+    restart: unless-stopped
+    image: redis:6
+
+    ports:
+      - '${REDIS_PUBLIC_PORT:-6379}:6379'
+
+    volumes:
+      - redis_data:/data
+
+    networks:
+      - backend
+
 networks:
     backend: {}
 
 volumes:
     shared: {}
+    redis_data: {}

@@ -1,4 +1,5 @@
 using Common;
+using Common.RedisSupport;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Threading;
@@ -10,11 +11,13 @@ namespace Original.Tests
     public class OriginalTests
     {
         private readonly Mock<IRabbitClient> _rabbitClientMock;
+        private readonly Mock<IRedisClient> _redisClientMock;
         private readonly Mock<ILogger<Original>> _loggerMock;
 
         public OriginalTests()
         {
             _rabbitClientMock = new Mock<IRabbitClient>(MockBehavior.Strict);
+            _redisClientMock = new Mock<IRedisClient>(MockBehavior.Strict);
             _loggerMock = new Mock<ILogger<Original>>();
 
             _rabbitClientMock.Setup(it => it.WaitForRabbitMQ(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
@@ -27,7 +30,7 @@ namespace Original.Tests
         {
             var options = TestUtils.Utils.GetTestOptions();
             // Arrange
-            var original = new Original(_rabbitClientMock.Object, _loggerMock.Object, options);
+            var original = new Original(_rabbitClientMock.Object, _redisClientMock.Object, _loggerMock.Object, options);
 
             // Act
             await original.StartAsync(CancellationToken.None);

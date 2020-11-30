@@ -5,7 +5,6 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,20 +145,7 @@ namespace APIGateway.Tests.Features.States
                 _client = factory.WithTestServices(services =>
                 {
                     // Services...
-
                     services.SetupMockServices(originalServiceMock);
-
-                    //var descriptor = services.SingleOrDefault(
-                    //    d => d.ServiceType ==
-                    //        typeof(IOriginalService));
-
-                    //services.Remove(descriptor);
-
-                    ////services.AddTransient<IMessageService, TestMessageService>();
-                    //services.AddTransient<IOriginalService>(svc => originalServiceMock.Object);
-                    //services.AddRefitClient<IOriginalService>(new RefitSettings()
-                    //{
-                    //});
                     services.AddSingleton(_ => dateTime);
                 }).CreateClient();
 

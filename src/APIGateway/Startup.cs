@@ -8,6 +8,7 @@ using APIGateway.Features.Original;
 using APIGateway.Features.States;
 using APIGateway.Utils;
 using Common;
+using Common.RedisSupport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -53,8 +54,12 @@ namespace APIGateway
                 });
 
             services.AddTransient<IDateTimeService, DateTimeService>();
+            services.AddSingleton<IRedisClient, RedisClient>();
 
-            services.AddSingleton<IStateService, SessionStateService>();
+            // services.AddSingleton<IStateService, SessionStateService>();
+
+            services.AddSingleton<ISessionService, SessionService>();
+            services.AddSingleton<IStateService, RedisStateService>();
             services.AddSingleton<IRunLogService, InMemoryRunLogService>();
 
             services.Configure<APIOptions>(Configuration);
