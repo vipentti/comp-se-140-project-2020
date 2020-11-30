@@ -1,6 +1,7 @@
 using APIGateway.Features.Messages;
 using APIGateway.Features.States;
 using APIGateway.Tests.Features.Messages;
+using Common.States;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 

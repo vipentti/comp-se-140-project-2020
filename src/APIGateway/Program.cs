@@ -1,5 +1,6 @@
 ﻿using APIGateway.Features.States;
 using Common;
+using Common.States;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

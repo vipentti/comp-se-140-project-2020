@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common.States;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States

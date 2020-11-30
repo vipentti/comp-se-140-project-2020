@@ -2,6 +2,7 @@ using APIGateway;
 using APIGateway.Features.States;
 using APIGateway.Tests.Features.States;
 using Common;
+using Common.States;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

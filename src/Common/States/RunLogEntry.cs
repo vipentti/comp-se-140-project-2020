@@ -1,5 +1,4 @@
-﻿using Common;
-using System;
+﻿using System;
 
 namespace Common.States
 {

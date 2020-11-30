@@ -9,6 +9,7 @@ using APIGateway.Features.States;
 using APIGateway.Utils;
 using Common;
 using Common.RedisSupport;
+using Common.States;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

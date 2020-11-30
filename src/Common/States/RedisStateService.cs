@@ -29,7 +29,7 @@ namespace Common.States
         {
             var db = await redisClient.GetDatabase();
 
-            await db.ListTrimAsync(CurrentRunLogKey, 0, -1);
+            await db.KeyDeleteAsync(CurrentRunLogKey);
         }
 
         public async Task<ApplicationState> GetCurrentState()

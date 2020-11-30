@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common.States;
+using Microsoft.AspNetCore.Http;
 
 namespace APIGateway.Features.States
 {
