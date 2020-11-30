@@ -1,4 +1,7 @@
-﻿using Refit;
+﻿using Common;
+using Refit;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.Original
@@ -6,15 +9,47 @@ namespace APIGateway.Features.Original
     public interface IOriginalService
     {
         [Put("/start")]
-        Task<string> Start();
+        Task<ApplicationState> Start();
 
         [Put("/stop")]
-        Task<string> Stop();
+        Task<ApplicationState> Stop();
 
         [Put("/reset")]
-        Task<string> Reset();
+        Task<ApplicationState> Reset();
 
         [Put("/state")]
-        Task<string> SetState(string state);
+        Task<ApplicationState> SetState(ApplicationState state);
+    }
+
+    public class EnumerationSerializer : IContentSerializer
+    {
+        public async Task<T> DeserializeAsync<T>(HttpContent content)
+        {
+            if (!typeof(T).IsImplementationOf(typeof(Enumeration)))
+            {
+                throw new InvalidOperationException($"Unsupported content type {content}");
+            }
+
+            string contentString = await content.ReadAsStringAsync();
+
+            // NOTE: Having to use the non-generic version since the IContentSerializer is not
+            // restricted to only Enumerations
+            return (T)Enumeration.FromName(typeof(T), contentString);
+        }
+
+        public Task<HttpContent> SerializeAsync<T>(T item)
+        {
+            if (!typeof(T).IsImplementationOf(typeof(Enumeration)))
+            {
+                throw new InvalidOperationException($"Unsupported content type {item}");
+            }
+
+            if (item is not Enumeration enumeration)
+            {
+                throw new InvalidOperationException($"Unsupported content type {item}");
+            }
+
+            return Task.FromResult<HttpContent>(new StringContent(enumeration.Name));
+        }
     }
 }

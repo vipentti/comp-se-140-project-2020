@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Common.Enumerations;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Original
 {
@@ -25,8 +21,10 @@ namespace Original
         {
             services.AddHttpContextAccessor();
 
-            services.AddMvcCore(_ =>
+            services.AddMvcCore(opts =>
             {
+                opts.OutputFormatters.Insert(0, new EnumerationOutputFormatter());
+                opts.InputFormatters.Insert(0, new EnumerationInputFormatter());
             });
 
             Common.ProgramCommon.ConfigureCommonServices(services, Configuration);

@@ -46,7 +46,7 @@ namespace APIGateway
                 svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
             });
 
-            services.AddRefitClient<IOriginalService>()
+            services.AddRefitClient<IOriginalService>(new RefitSettings(new EnumerationSerializer()))
                 .ConfigureHttpClient(client =>
                 {
                     client.BaseAddress = new System.Uri(Configuration.Get<APIOptions>().OriginalServerUrl);
