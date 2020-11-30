@@ -32,6 +32,11 @@ TEST_EXIT_CODE=$?
 
 echo "Tests returned $TEST_EXIT_CODE"
 
+if [ ! $TEST_EXIT_CODE -eq 0 ]; then
+    echo "Dumping logs"
+    docker-compose --project-name "${E2E_PROJECT_NAME}" logs --no-color > ./testresults/e2e/service-logs.txt 2>&1
+fi
+
 docker-compose --project-name "${E2E_PROJECT_NAME}" down --volumes
 
 exit $TEST_EXIT_CODE
