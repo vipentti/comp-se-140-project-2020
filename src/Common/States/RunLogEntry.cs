@@ -3,6 +3,9 @@ using System;
 
 namespace Common.States
 {
+    /// <summary>
+    /// A sigle entry in the run log
+    /// </summary>
     public record RunLogEntry(DateTime Timestamp, ApplicationState State)
     {
         public static RunLogEntry FromString(string input)

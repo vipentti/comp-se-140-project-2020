@@ -1,5 +1,8 @@
 namespace Common.Enumerations
 {
+    /// <summary>
+    /// Various states of the application
+    /// </summary>
     public abstract record ApplicationState : Enumeration
     {
         public static readonly ApplicationState Init = new InitState();

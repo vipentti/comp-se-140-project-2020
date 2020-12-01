@@ -2,6 +2,9 @@
 
 namespace Common.Messages
 {
+    /// <summary>
+    /// A single message in the message log that is written to by the Observer
+    /// </summary>
     public record TopicMessage(DateTime Timestamp, string Topic, string Content)
     {
         private const string TopicPrefix = "Topic ";
