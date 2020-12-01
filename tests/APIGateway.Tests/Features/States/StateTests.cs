@@ -1,10 +1,5 @@
-using APIGateway.Features.Original;
-using APIGateway.Features.States;
 using Common;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,7 +10,6 @@ namespace APIGateway.Tests.Features.States
     {
         private readonly APIGatewayAppFactory factory;
         private readonly string endpoint = "/state";
-        private readonly Mock<IOriginalService> originalServiceMock = new(MockBehavior.Strict);
 
         public StateTests(APIGatewayAppFactory factory)
         {

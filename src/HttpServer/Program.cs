@@ -1,5 +1,4 @@
 ﻿using Common;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
-using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace HttpServer
@@ -35,14 +33,19 @@ namespace HttpServer
             }
         }
 
-        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .UseKestrel()
                 .ConfigureAppConfiguration(ProgramCommon.ConfigureApplication)
-                .Configure(app =>
+                .ConfigureWebHostDefaults(builder =>
                 {
-                    app.UseMiddleware<ServerMiddleware>();
+                    builder
+                        .UseSerilog()
+                        .UseKestrel()
+                        .Configure(app =>
+                        {
+                            app.UseMiddleware<ServerMiddleware>();
+                        });
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
