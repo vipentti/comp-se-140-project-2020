@@ -1,6 +1,5 @@
 ﻿using Common;
 using Common.Enumerations;
-using Common.RedisSupport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,12 +1,9 @@
-﻿using APIGateway.Features.Original;
-using Common;
+﻿using Common;
 using Common.States;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
@@ -14,15 +11,11 @@ namespace APIGateway.Features.States
     [ApiController]
     public class StateController : ControllerBase
     {
-        private readonly ILogger<StateController> logger;
         private readonly IStateService stateService;
-        private readonly IOriginalService originalService;
 
-        public StateController(IStateService stateService, IOriginalService originalService, ILogger<StateController> logger)
+        public StateController(IStateService stateService)
         {
             this.stateService = stateService;
-            this.originalService = originalService;
-            this.logger = logger;
         }
 
         [HttpGet]
@@ -42,15 +35,6 @@ namespace APIGateway.Features.States
         public async Task<ActionResult<ApplicationState>> SetCurrentState([FromBody] ApplicationState state)
         {
             _ = await stateService.SetCurrentState(state);
-
-            //try
-            //{
-            //    await originalService.SetState(state);
-            //}
-            //catch (HttpRequestException ex)
-            //{
-            //    logger.LogWarning("Failed to set original state {@Exception}", ex);
-            //}
 
             return state;
         }
@@ -75,15 +59,6 @@ namespace APIGateway.Features.States
             await stateService.ClearRunLogEntries();
 
             _ = await stateService.SetCurrentState(state);
-
-            //try
-            //{
-            //    await originalService.SetState(state);
-            //}
-            //catch (HttpRequestException ex)
-            //{
-            //    logger.LogWarning("Failed to set original state {@Exception}", ex);
-            //}
 
             var entries = await stateService.GetRunLogEntries();
 

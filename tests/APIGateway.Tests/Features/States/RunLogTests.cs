@@ -1,5 +1,4 @@
 using APIGateway.Features.Original;
-using APIGateway.Features.States;
 using Common;
 using Common.States;
 using FluentAssertions;

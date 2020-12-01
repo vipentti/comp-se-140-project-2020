@@ -1,14 +1,14 @@
 ﻿using Common;
+using Common.States;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Common.States;
-using System.Collections.Generic;
 
 namespace Original
 {

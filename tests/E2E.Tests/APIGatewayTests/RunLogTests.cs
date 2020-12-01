@@ -1,5 +1,4 @@
 using APIGateway;
-using APIGateway.Features.States;
 using APIGateway.Tests.Features.States;
 using Common;
 using Common.States;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
