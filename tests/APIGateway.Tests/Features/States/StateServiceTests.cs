@@ -1,6 +1,7 @@
 using APIGateway.Features.States;
 using Common;
 using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestUtils;
@@ -11,6 +12,7 @@ namespace APIGateway.Tests.Features.States
     public class StateServiceTests
     {
         private readonly StateService stateService;
+        private readonly Random random = new();
 
         public StateServiceTests()
         {
@@ -55,6 +57,8 @@ namespace APIGateway.Tests.Features.States
                     _ = await stateService.SetCurrentState(next);
                 }
             }
+
+            await Task.Delay(random.Next(100, 250));
 
             await stateService.SetCurrentState(ApplicationState.Paused);
 
