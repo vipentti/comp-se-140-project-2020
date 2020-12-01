@@ -1,4 +1,4 @@
-namespace Common
+namespace Common.Enumerations
 {
     public abstract record ApplicationState : Enumeration
     {

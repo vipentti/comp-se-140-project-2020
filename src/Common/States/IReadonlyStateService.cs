@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Common.Enumerations;
+using System.Threading.Tasks;
 
 namespace Common.States
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Common;
+using Common.Enumerations;
 using Common.Messages;
 using Common.States;
 using Refit;

@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Enumerations;
 using FluentAssertions;
 using System.Linq;
 using Xunit;

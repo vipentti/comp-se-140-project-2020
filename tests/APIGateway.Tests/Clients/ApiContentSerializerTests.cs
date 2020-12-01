@@ -1,5 +1,6 @@
 ﻿using APIGateway.Clients;
 using Common;
+using Common.Enumerations;
 using Common.Messages;
 using Common.States;
 using FluentAssertions;

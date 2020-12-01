@@ -1,5 +1,5 @@
 using APIGateway.Features.States;
-using Common;
+using Common.Enumerations;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

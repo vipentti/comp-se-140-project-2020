@@ -1,4 +1,5 @@
-﻿using Common.RedisSupport;
+﻿using Common.Enumerations;
+using Common.RedisSupport;
 using System;
 using System.Threading.Tasks;
 

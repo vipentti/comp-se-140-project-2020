@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Enumerations;
 using Common.States;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

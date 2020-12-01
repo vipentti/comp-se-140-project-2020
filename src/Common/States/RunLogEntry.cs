@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Enumerations;
+using System;
 
 namespace Common.States
 {

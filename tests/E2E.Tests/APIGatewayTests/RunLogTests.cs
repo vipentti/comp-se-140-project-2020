@@ -1,6 +1,7 @@
 using APIGateway;
 using APIGateway.Tests.Features.States;
 using Common;
+using Common.Enumerations;
 using Common.States;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;

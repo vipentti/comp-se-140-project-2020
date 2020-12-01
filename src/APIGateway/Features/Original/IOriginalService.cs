@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Enumerations;
 using Refit;
 using System;
 using System.Net.Http;

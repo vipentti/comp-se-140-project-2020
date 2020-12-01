@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Common
+namespace Common.Enumerations
 {
     public abstract record Enumeration(int Id, string Name)
     {

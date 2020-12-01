@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Common;
+using Common.Enumerations;
 using Refit;
 
 namespace APIGateway.Clients
