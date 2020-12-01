@@ -115,7 +115,7 @@ services:
 
   rabbitmq:
     restart: unless-stopped
-    image: rabbitmq:3-management
+    image: rabbitmq:3-management-alpine
     hostname: rabbitmq
     ports:
       # The standard AMQP protocol port
@@ -136,7 +136,7 @@ services:
 
   redis:
     restart: unless-stopped
-    image: redis:6
+    image: redis:6-alpine
 
     ports:
       - '${REDIS_PUBLIC_PORT:-6379}:6379'
