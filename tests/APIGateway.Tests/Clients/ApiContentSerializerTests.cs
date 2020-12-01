@@ -1,5 +1,6 @@
 ﻿using APIGateway.Clients;
 using Common;
+using Common.Messages;
 using Common.States;
 using FluentAssertions;
 using System;
@@ -35,6 +36,15 @@ namespace APIGateway.Tests.Clients
                 await CheckStringContent(serialized, content => content.Should().Be(entry.ToString()));
             }
 
+            [Theory]
+            [ClassData(typeof(TopicMessageData))]
+            public async Task SerializeAsync_Can_Serialize_Individual_TopicMessage(TopicMessage entry)
+            {
+                var serialized = await contentSerializer.SerializeAsync(entry);
+
+                await CheckStringContent(serialized, content => content.Should().Be(entry.ToString()));
+            }
+
             [Fact]
             public async Task SerializeAsync_Can_Serialize_ListOf_RunLogEntries()
             {
@@ -48,11 +58,7 @@ namespace APIGateway.Tests.Clients
             [Fact]
             public async Task SerializeAsync_Can_Serialize_ListOf_Messages()
             {
-                var messages = new string[]
-                {
-                    "Message 1",
-                    "Message 2",
-                };
+                var messages = TestTopicMessages.ToList();
 
                 var serialized = await contentSerializer.SerializeAsync(messages);
 
@@ -87,6 +93,17 @@ namespace APIGateway.Tests.Clients
                 deserialized.Should().Be(entry);
             }
 
+            [Theory]
+            [ClassData(typeof(TopicMessageData))]
+            public async Task DeserializeAsync_Can_Deserialize_Individual_TopicMessage(TopicMessage entry)
+            {
+                var serialized = await contentSerializer.SerializeAsync(entry);
+
+                var deserialized = await contentSerializer.DeserializeAsync<TopicMessage>(serialized);
+
+                deserialized.Should().Be(entry);
+            }
+
             [Fact]
             public async Task DeserializeAsync_Can_Deserialize_ListOf_RunLogEntries()
             {
@@ -102,15 +119,11 @@ namespace APIGateway.Tests.Clients
             [Fact]
             public async Task DeserializeAsync_Can_Deserialize_ListOf_Messages()
             {
-                var messages = new string[]
-                {
-                    "Message 1",
-                    "Message 2",
-                };
+                var messages = TestTopicMessages.ToList();
 
                 var serialized = await contentSerializer.SerializeAsync(messages);
 
-                var deserialized = await contentSerializer.DeserializeAsync<IEnumerable<string>>(serialized);
+                var deserialized = await contentSerializer.DeserializeAsync<IEnumerable<TopicMessage>>(serialized);
 
                 deserialized.Should().Equal(messages);
             }
@@ -137,6 +150,17 @@ namespace APIGateway.Tests.Clients
             }
         }
 
+        protected class TopicMessageData : TheoryData<TopicMessage>
+        {
+            public TopicMessageData()
+            {
+                foreach (var entry in TestTopicMessages)
+                {
+                    Add(entry);
+                }
+            }
+        }
+
         protected class StateData : TheoryData<ApplicationState>
         {
             public StateData()
@@ -156,6 +180,14 @@ namespace APIGateway.Tests.Clients
                 {
                     yield return new RunLogEntry(TestUtils.Utils.GetDefaultTestTime(), state);
                 }
+            }
+        }
+
+        protected static IEnumerable<TopicMessage> TestTopicMessages
+        {
+            get
+            {
+                yield return new TopicMessage(TestUtils.Utils.GetDefaultTestTime(), "test-topic", "test-message");
             }
         }
     }

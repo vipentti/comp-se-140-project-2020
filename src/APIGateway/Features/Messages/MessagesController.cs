@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using APIGateway.Clients;
+using Common.Messages;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.Messages
@@ -7,20 +10,21 @@ namespace APIGateway.Features.Messages
     [ApiController]
     public class MessagesController : ControllerBase
     {
-        private readonly IMessageService messageService;
+        private readonly IMessageApiService messageService;
 
-        public MessagesController(IMessageService messageService)
+        public MessagesController(IMessageApiService messageService)
         {
             this.messageService = messageService;
         }
 
         [HttpGet]
         [Route("/messages")]
-        public async Task<ActionResult<string>> GetMessages()
+        [Produces("text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<TopicMessage>>> GetMessages()
         {
             var messages = await messageService.GetMessages();
-
-            return string.Join(Environment.NewLine, messages);
+            return Ok(messages);
         }
     }
 }

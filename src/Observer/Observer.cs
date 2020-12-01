@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,7 +51,7 @@ namespace Observer
         {
             logger.LogInformation("Received message {@Message}", message);
 
-            string output = $"{dateTime.UtcNow.ToISO8601()} Topic {message.Topic}: {message.Content}";
+            string output = new TopicMessage(dateTime.UtcNow, message.Topic, message.Content).ToString();
 
             logger.LogInformation("writing to {path}: '{output}'", settings.OutFilePath, output);
 

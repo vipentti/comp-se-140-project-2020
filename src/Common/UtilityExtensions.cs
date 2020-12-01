@@ -1,3 +1,4 @@
+using Common.Messages;
 using Common.States;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,23 @@ namespace Common
             return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
         }
 
-        public static string MessagesToString(this IEnumerable<string> entries)
+        public static string TopicMessagesToString(this IEnumerable<TopicMessage> entries)
         {
-            return string.Join(Environment.NewLine, entries);
+            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
+        }
+
+        public static IEnumerable<RunLogEntry> RunLogEntriesFromString(this string input)
+        {
+            return input
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Select(RunLogEntry.FromString);
+        }
+
+        public static IEnumerable<TopicMessage> TopicMessagesFromString(this string input)
+        {
+            return input
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Select(TopicMessage.FromString);
         }
     }
 }

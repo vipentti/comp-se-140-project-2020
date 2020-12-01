@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Common;
+using Common.Messages;
 using Common.States;
 using Refit;
 
@@ -12,7 +12,7 @@ namespace APIGateway.Clients
     public interface IMessageApiService
     {
         [Get("/messages")]
-        Task<IEnumerable<string>> GetMessages();
+        Task<IEnumerable<TopicMessage>> GetMessages();
     }
 
     public interface IStateApiService
@@ -56,27 +56,28 @@ namespace APIGateway.Clients
                 return (T)logEntry;
             }
 
+            if (typeof(TopicMessage).IsAssignableFrom(typeof(T)))
+            {
+                object logEntry = TopicMessage.FromString(contentString);
+                return (T)logEntry;
+            }
+
             var runLogGenericType = typeof(IEnumerable<>).MakeGenericType(typeof(RunLogEntry));
 
             if (runLogGenericType.IsAssignableFrom(typeof(T)))
             {
                 // Run-log
-                object logEntries = contentString
-                    .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(RunLogEntry.FromString)
-                    .ToList();
+                object logEntries = contentString.RunLogEntriesFromString();
 
                 return (T)logEntries;
             }
 
-            var messageGenericType = typeof(IEnumerable<>).MakeGenericType(typeof(string));
+            var messageGenericType = typeof(IEnumerable<>).MakeGenericType(typeof(TopicMessage));
 
             if (messageGenericType.IsAssignableFrom(typeof(T)))
             {
                 // messages
-                object messages = contentString
-                    .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                    .ToList();
+                object messages = contentString.TopicMessagesFromString();
 
                 return (T)messages;
             }
@@ -93,7 +94,7 @@ namespace APIGateway.Clients
 
             if (item is IEnumerable<RunLogEntry> logs)
             {
-                return Task.FromResult<HttpContent>(new StringContent(string.Join(Environment.NewLine, logs.Select(it => it.ToString()))));
+                return Task.FromResult<HttpContent>(new StringContent(logs.RunLogEntriesToString()));
             }
 
             if (item is RunLogEntry entry)
@@ -101,9 +102,14 @@ namespace APIGateway.Clients
                 return Task.FromResult<HttpContent>(new StringContent(entry.ToString()));
             }
 
-            if (item is IEnumerable<string> messages)
+            if (item is IEnumerable<TopicMessage> messages)
             {
-                return Task.FromResult<HttpContent>(new StringContent(string.Join(Environment.NewLine, messages)));
+                return Task.FromResult<HttpContent>(new StringContent(messages.TopicMessagesToString()));
+            }
+
+            if (item is TopicMessage message)
+            {
+                return Task.FromResult<HttpContent>(new StringContent(message.ToString()));
             }
 
             throw new NotSupportedException($"Serialization of {typeof(T)} is not supported. Value: {item}");

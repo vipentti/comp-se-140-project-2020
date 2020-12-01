@@ -4,6 +4,7 @@ using APIGateway.Features.Original;
 using APIGateway.Features.States;
 using APIGateway.Utils;
 using Common;
+using Common.Messages;
 using Common.States;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,21 @@ namespace APIGateway
             services.AddMvcCore(opts =>
             {
                 opts.OutputFormatters.Insert(0, new Common.Enumerations.EnumerationOutputFormatter());
+                opts.OutputFormatters.Insert(0, new Common.Formatters.PlainTextOutputFormatter<RunLogEntry>());
+                opts.OutputFormatters.Insert(0, new Common.Formatters.PlainTextOutputFormatter<TopicMessage>());
+
                 opts.InputFormatters.Insert(0, new Common.Enumerations.EnumerationInputFormatter());
+                opts.InputFormatters.Insert(0, new Common.Formatters.PlainTextInputFormatter<RunLogEntry>(
+                    RunLogEntry.FromString,
+                    its => its.RunLogEntriesFromString()
+                ));
+
+                opts.InputFormatters.Insert(0, new Common.Formatters.PlainTextInputFormatter<TopicMessage>(
+                    TopicMessage.FromString,
+                    its => its.TopicMessagesFromString()
+                ));
+
+                //opts.InputFormatters.Insert(0, new Common.Enumerations.EnumerationInputFormatter());
             });
 
             var apiOptions = Configuration.Get<APIOptions>();
@@ -40,6 +55,12 @@ namespace APIGateway
             {
                 svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
             });
+
+            services.AddRefitClient<IMessageApiService>(new RefitSettings(new ApiContentSerializer()))
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
+                });
 
             services.AddRefitClient<IOriginalService>(new RefitSettings(new ApiContentSerializer()))
                 .ConfigureHttpClient(client =>

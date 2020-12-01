@@ -2,8 +2,7 @@
 using Common.States;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
@@ -43,10 +42,10 @@ namespace APIGateway.Features.States
         [Route("/run-log")]
         [Produces("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetRunLog()
+        public async Task<ActionResult<IEnumerable<RunLogEntry>>> GetRunLog()
         {
             var entries = await stateService.GetRunLogEntries();
-            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
+            return Ok(entries);
         }
 
         [HttpPut]
@@ -54,15 +53,14 @@ namespace APIGateway.Features.States
         [Produces("text/plain")]
         [Consumes("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> ReinitRunLog([FromBody] ApplicationState state)
+        public async Task<ActionResult<IEnumerable<RunLogEntry>>> ReinitRunLog([FromBody] ApplicationState state)
         {
             await stateService.ClearRunLogEntries();
 
             _ = await stateService.SetCurrentState(state);
 
             var entries = await stateService.GetRunLogEntries();
-
-            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
+            return Ok(entries);
         }
     }
 }
