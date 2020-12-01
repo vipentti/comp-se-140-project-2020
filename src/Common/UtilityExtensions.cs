@@ -1,3 +1,4 @@
+using Common.States;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,5 +24,15 @@ namespace Common
             DateTime.TryParseExact(input, ISO8601Format, null, DateTimeStyles.AdjustToUniversal, out var result)
                 ? result
                 : null;
+
+        public static string RunLogEntriesToString(this IEnumerable<RunLogEntry> entries)
+        {
+            return string.Join(Environment.NewLine, entries.Select(it => it.ToString()));
+        }
+
+        public static string MessagesToString(this IEnumerable<string> entries)
+        {
+            return string.Join(Environment.NewLine, entries);
+        }
     }
 }
