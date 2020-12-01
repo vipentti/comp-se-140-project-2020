@@ -12,20 +12,20 @@ namespace Original.Tests
     public class OriginalTests
     {
         private readonly Mock<IRabbitClient> _rabbitClientMock;
-        private readonly Mock<IRedisClient> _redisClientMock;
         private readonly Mock<ISharedStateService> _sharedStateMock;
         private readonly Mock<ILogger<Original>> _loggerMock;
 
         public OriginalTests()
         {
             _rabbitClientMock = new Mock<IRabbitClient>(MockBehavior.Strict);
-            _redisClientMock = new Mock<IRedisClient>(MockBehavior.Strict);
             _sharedStateMock = new Mock<ISharedStateService>(MockBehavior.Strict);
             _loggerMock = new Mock<ILogger<Original>>();
 
             _sharedStateMock.Setup(
                 it => it.SubscribeToChanges(It.IsAny<IStateChangeListener>())
             ).Returns(Task.CompletedTask);
+
+            _sharedStateMock.Setup(it => it.GetCurrentState()).ReturnsAsync(ApplicationState.Running);
 
             _rabbitClientMock.Setup(it => it.WaitForRabbitMQ(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             _rabbitClientMock.Setup(it => it.TryConnect(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
