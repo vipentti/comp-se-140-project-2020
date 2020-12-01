@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace APIGateway.Utils
 {
-    public class InitListener : BackgroundService, IStateChangeListener
+    public class InitListener : BackgroundService, IStateChangeListener<ApplicationState.InitState>
     {
         private readonly ILogger<InitListener> logger;
         private readonly ISharedStateService sharedState;
@@ -20,16 +20,15 @@ namespace APIGateway.Utils
             this.stateService = stateService;
         }
 
-        public async Task OnStateChange(ApplicationState state)
+        public async Task OnStateChange(ApplicationState.InitState state)
         {
             logger.LogInformation("Received {State}", state);
-            if (state == ApplicationState.Init)
-            {
-                await Task.Delay(0);
-                await stateService.SetCurrentState(ApplicationState.Running);
-            }
+            await stateService.SetCurrentState(ApplicationState.Running);
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken) => await sharedState.SubscribeToChanges(this);
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            await sharedState.SubscribeToChanges(this);
+        }
     }
 }

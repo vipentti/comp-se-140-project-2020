@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Common.States
 {
-    public class ShutdownListener : BackgroundService, IStateChangeListener
+    public class ShutdownListener : BackgroundService, IStateChangeListener<ApplicationState.ShutdownState>
     {
         private readonly ILogger<ShutdownListener> logger;
         private readonly ISharedStateService sharedState;
@@ -18,16 +18,16 @@ namespace Common.States
             this.applicationLifetime = applicationLifetime;
         }
 
-        public async Task OnStateChange(ApplicationState state)
+        public async Task OnStateChange(ApplicationState.ShutdownState state)
         {
-            if (state == ApplicationState.Shutdown)
-            {
-                logger.LogInformation("Received {State}. Shutting down.", state);
-                await Task.Delay(100);
-                applicationLifetime.StopApplication();
-            }
+            logger.LogInformation("Received {State}. Shutting down.", state);
+            await Task.Delay(100);
+            applicationLifetime.StopApplication();
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken) => await sharedState.SubscribeToChanges(this);
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            await sharedState.SubscribeToChanges(this);
+        }
     }
 }

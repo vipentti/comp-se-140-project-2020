@@ -7,23 +7,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Common.RedisSupport;
 using Common.States;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Original
 {
     public class Original : BackgroundService, IStateChangeListener
     {
-        //public static async Task Main(string[] args)
-        //{
-        //    await ProgramCommon.Execute(args, svc =>
-        //    {
-        //        svc.AddHostedService<Original>();
-        //    });
-        //}
-
         public static async Task Main(string[] args)
         {
             ProgramCommon.ConfigureSerilog();
@@ -104,11 +94,9 @@ namespace Original
 
             await Task.Delay(options.DelayAfterConnect, stoppingToken);
 
-            //{
-            //    var sub = await redisClient.GetSubscriber();
-            //    var channel = await sub.SubscribeAsync("state-change");
-            //    channel.OnMessage(OnStateChange);
-            //}
+            // Get the initial paused state from the shared state since the API may have received a
+            // PAUSED state before Original was ready
+            paused = await IsPaused();
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -123,6 +111,18 @@ namespace Original
             }
 
             logger.LogInformation("Finished sending messages after {TotalSeconds} seconds", stopWatch.Elapsed.TotalSeconds);
+        }
+
+        private async Task<bool> IsPaused()
+        {
+            var current = await sharedState.GetCurrentState();
+
+            return current switch
+            {
+                ApplicationState.InitState _ => false,
+                ApplicationState.RunningState _ => false,
+                _ => true,
+            };
         }
 
         public async Task OnStateChange(ApplicationState state)

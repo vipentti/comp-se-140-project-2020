@@ -25,7 +25,7 @@ namespace APIGateway.Features.Original
     {
         public async Task<T> DeserializeAsync<T>(HttpContent content)
         {
-            if (!typeof(T).IsImplementationOf(typeof(Enumeration)))
+            if (!typeof(T).ImplementsOrDerives(typeof(Enumeration)))
             {
                 throw new InvalidOperationException($"Unsupported content type {typeof(T)} {content}");
             }
