@@ -1,4 +1,5 @@
 using Common.Enumerations;
+using Common.Options;
 using Common.RedisSupport;
 using Common.States;
 using Microsoft.Extensions.Configuration;

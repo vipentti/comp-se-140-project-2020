@@ -1,4 +1,5 @@
 using Common;
+using Common.Options;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

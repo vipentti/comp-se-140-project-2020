@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Options;
 using Microsoft.Extensions.Options;
 using System;
 

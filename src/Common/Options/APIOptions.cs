@@ -1,4 +1,4 @@
-namespace APIGateway
+namespace Common.Options
 {
     public record APIOptions
     {
