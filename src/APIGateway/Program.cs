@@ -1,5 +1,4 @@
-﻿using APIGateway.Features.States;
-using Common;
+﻿using Common;
 using Common.States;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +25,7 @@ namespace APIGateway
 
                     await stateService.ClearRunLogEntries();
                     await stateService.SetCurrentState(ApplicationState.Init);
+                    await stateService.SetCurrentState(ApplicationState.Running);
                 }
 
                 await host.RunAsync();
