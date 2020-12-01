@@ -38,8 +38,8 @@ namespace APIGateway
             // Register custom formatters for Enumertion types
             services.AddMvcCore(opts =>
             {
-                opts.OutputFormatters.Insert(0, new EnumerationOutputFormatter());
-                opts.InputFormatters.Insert(0, new EnumerationInputFormatter());
+                opts.OutputFormatters.Insert(0, new Common.Enumerations.EnumerationOutputFormatter());
+                opts.InputFormatters.Insert(0, new Common.Enumerations.EnumerationInputFormatter());
             });
 
             var apiOptions = Configuration.Get<APIOptions>();

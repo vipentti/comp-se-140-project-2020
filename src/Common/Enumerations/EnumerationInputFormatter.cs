@@ -30,6 +30,6 @@ namespace Common.Enumerations
             return InputFormatterResult.Success(result);
         }
 
-        protected override bool CanReadType(Type type) => type.IsImplementationOf(typeof(Enumeration));
+        protected override bool CanReadType(Type type) => type.ImplementsOrDerives(typeof(Enumeration));
     }
 }

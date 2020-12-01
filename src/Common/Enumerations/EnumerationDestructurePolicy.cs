@@ -9,7 +9,7 @@ namespace Common.Enumerations
         {
             result = null;
 
-            if (value?.GetType().IsImplementationOf(typeof(Enumeration)) ?? false)
+            if (value?.GetType().ImplementsOrDerives(typeof(Enumeration)) ?? false)
             {
                 var name = ((Enumeration)value).Name;
 

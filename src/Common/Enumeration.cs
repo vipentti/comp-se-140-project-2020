@@ -7,6 +7,8 @@ namespace Common
 {
     public abstract record Enumeration(int Id, string Name)
     {
+        public override string ToString() => Name;
+
         public static IEnumerable<T> GetAll<T>() where T : Enumeration
         {
             return GetAll(typeof(T)).Cast<T>();
@@ -14,9 +16,9 @@ namespace Common
 
         public static IEnumerable<Enumeration> GetAll(Type type)
         {
-            if (!type.IsImplementationOf(typeof(Enumeration)))
+            if (!type.ImplementsOrDerives(typeof(Enumeration)))
             {
-                throw new InvalidOperationException($"{type} is an implementaion of {typeof(Enumeration)}");
+                throw new InvalidOperationException($"{type} is not an implementaion of {typeof(Enumeration)}");
             }
 
             var fields = type.GetTypeInfo().GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
@@ -46,11 +48,6 @@ namespace Common
 
         public static object FromName(Type type, string name)
         {
-            if (!type.IsImplementationOf(typeof(Enumeration)))
-            {
-                throw new InvalidOperationException($"{type} is an implementaion of {typeof(Enumeration)}");
-            }
-
             var matchingItem = GetAll(type).FirstOrDefault(it => it.Name == name);
             var description = "name";
 

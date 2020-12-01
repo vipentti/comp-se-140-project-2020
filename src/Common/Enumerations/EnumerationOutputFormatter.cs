@@ -1,5 +1,4 @@
-﻿using Common;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using System;
@@ -20,7 +19,7 @@ namespace Common.Enumerations
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            if (context.Object is not ApplicationState state)
+            if (context.Object is not Enumeration state)
             {
                 throw new InvalidOperationException($"Invalid type {context.ObjectType}");
             }
@@ -28,6 +27,6 @@ namespace Common.Enumerations
             await context.HttpContext.Response.WriteAsync(state.ToString());
         }
 
-        protected override bool CanWriteType(Type type) => type.IsImplementationOf(typeof(Enumeration));
+        protected override bool CanWriteType(Type type) => type.ImplementsOrDerives(typeof(Enumeration));
     }
 }
