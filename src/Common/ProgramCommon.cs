@@ -134,16 +134,9 @@ namespace Common
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ISessionService, DefaultSessionService>();
 
-            //services.AddSingleton<RedisStateService>();
-            //services.AddSingleton<IReadonlyStateService>(cont => cont.GetRequiredService<RedisStateService>());
-            //services.AddSingleton<IStateService>(cont => cont.GetRequiredService<RedisStateService>());
-            //services.AddSingleton<IRedisClient, RedisClient>();
-            //services.AddSingleton<ISharedStateService, SharedStateService>();
-
             services.Configure<RabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.Configure<CommonOptions>(configuration);
 
-            //services.AddHostedService<ShutdownListener>();
             services.AddStateServices();
         }
 
@@ -155,21 +148,6 @@ namespace Common
                 {
                     configureServices(services);
                     services.ConfigureCommonServices(hostContext.Configuration);
-                    /*
-                    services.AddTransient<RabbitClient>();
-                    services.AddTransient<IRabbitClient, RabbitClient>();
-                    services.AddTransient<IDateTimeService, DateTimeService>();
-
-                    // Register FileSystem
-                    services.AddSingleton<IFileSystem, FileSystem>();
-
-                    configureServices(services);
-
-                    var config = hostContext.Configuration;
-
-                    services.Configure<RabbitMQOptions>(config.GetSection("RabbitMQ"));
-                    services.Configure<CommonOptions>(config);
-                    */
                 });
     }
 }

@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
 {
-    public class StateService : IStateService
+    public class InMemoryStateService : IStateService
     {
         private readonly SemaphoreSlim stateSemaphore = new SemaphoreSlim(1);
         private readonly IRunLogService runLog;
         private readonly IDateTimeService dateTime;
 
-        public StateService(IRunLogService runLog, IDateTimeService dateTime)
+        public InMemoryStateService(IRunLogService runLog, IDateTimeService dateTime)
         {
             this.runLog = runLog;
             this.dateTime = dateTime;

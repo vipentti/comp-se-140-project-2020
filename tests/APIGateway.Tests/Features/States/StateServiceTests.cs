@@ -11,12 +11,12 @@ namespace APIGateway.Tests.Features.States
 {
     public class StateServiceTests
     {
-        private readonly StateService stateService;
+        private readonly InMemoryStateService stateService;
         private readonly Random random = new();
 
         public StateServiceTests()
         {
-            stateService = new StateService(
+            stateService = new InMemoryStateService(
                 new InMemoryRunLogService(),
                 new TestDateTimeService()
                 {

@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace APIGateway.Features.States
 {
-    public class SessionStateService : IStateService
+    public class InMemorySessionStateService : IStateService
     {
         private readonly IHttpContextAccessor contextAccessor;
         private readonly IDateTimeService dateTime;
 
         private class Services
         {
-            public StateService StateService { get; init; } = null!;
+            public InMemoryStateService StateService { get; init; } = null!;
         }
 
         private readonly ConcurrentDictionary<string, Services> stateServices = new();
 
-        public SessionStateService(IHttpContextAccessor contextAccessor, IDateTimeService dateTime)
+        public InMemorySessionStateService(IHttpContextAccessor contextAccessor, IDateTimeService dateTime)
         {
             this.contextAccessor = contextAccessor;
             this.stateServices.TryAdd("default", new Services()
             {
-                StateService = new StateService(new InMemoryRunLogService(), dateTime),
+                StateService = new InMemoryStateService(new InMemoryRunLogService(), dateTime),
             });
             this.dateTime = dateTime;
         }
@@ -51,7 +51,7 @@ namespace APIGateway.Features.States
             {
                 stateServices.TryAdd(sessionId, new Services()
                 {
-                    StateService = new StateService(new InMemoryRunLogService(), dateTime),
+                    StateService = new InMemoryStateService(new InMemoryRunLogService(), dateTime),
                 });
             }
 

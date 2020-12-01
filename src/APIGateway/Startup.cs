@@ -1,5 +1,4 @@
 using APIGateway.Clients;
-using APIGateway.Features.Messages;
 using APIGateway.Features.Original;
 using APIGateway.Features.States;
 using APIGateway.Utils;
@@ -47,15 +46,9 @@ namespace APIGateway
                     TopicMessage.FromString,
                     its => its.TopicMessagesFromString()
                 ));
-
-                //opts.InputFormatters.Insert(0, new Common.Enumerations.EnumerationInputFormatter());
             });
 
             var apiOptions = Configuration.Get<APIOptions>();
-            services.AddHttpClient<IMessageService, MessageService>(svc =>
-            {
-                svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
-            });
 
             services.AddRefitClient<IMessageApiService>(new RefitSettings(new ApiContentSerializer()))
                 .ConfigureHttpClient(client =>
@@ -66,7 +59,7 @@ namespace APIGateway
             services.AddRefitClient<IOriginalService>(new RefitSettings(new ApiContentSerializer()))
                 .ConfigureHttpClient(client =>
                 {
-                    client.BaseAddress = new System.Uri(Configuration.Get<APIOptions>().OriginalServerUrl);
+                    client.BaseAddress = new System.Uri(apiOptions.OriginalServerUrl);
                 });
 
             services.AddTransient<IDateTimeService, DateTimeService>();
@@ -74,11 +67,6 @@ namespace APIGateway
 
             services.AddStateServices();
             services.AddHostedService<InitListener>();
-            //services.AddSingleton<IRedisClient, RedisClient>();
-
-            //// services.AddSingleton<IStateService, SessionStateService>();
-            //services.AddSingleton<IStateService, RedisStateService>();
-            //services.AddSingleton<IRunLogService, InMemoryRunLogService>();
 
             services.Configure<APIOptions>(Configuration);
         }

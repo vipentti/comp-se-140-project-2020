@@ -1,5 +1,4 @@
 using APIGateway.Clients;
-using APIGateway.Features.Messages;
 using APIGateway.Features.States;
 using APIGateway.Tests.Features.Messages;
 using Common.States;
@@ -14,9 +13,8 @@ namespace APIGateway.Tests
         {
             builder.ConfigureServices(services =>
             {
-                services.ReplaceTransient<IMessageService, TestMessageService>();
                 services.ReplaceTransient<IMessageApiService, TestMessageService>();
-                services.ReplaceSingleton<IStateService, SessionStateService>();
+                services.ReplaceSingleton<IStateService, InMemorySessionStateService>();
             });
         }
     }
