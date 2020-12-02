@@ -46,5 +46,11 @@ namespace E2E.Tests.APIGatewayTests
 
         [E2EFact]
         public override Task Get_NodeStatistics_Returns_NodeStatisticData() => base.Get_NodeStatistics_Returns_NodeStatisticData();
+
+        [E2EFact]
+        public override Task Get_QueueStatistics_Responds_Ok() => base.Get_QueueStatistics_Responds_Ok();
+
+        [E2EFact]
+        public override Task Get_QueueStatistics_Returns_Data() => base.Get_QueueStatistics_Returns_Data();
     }
 }

@@ -22,6 +22,14 @@ namespace APIGateway.Tests
                 },
             });
         }
+
+        public Task<IEnumerable<QueueStatistic>> GetQueueStatistics() => Task.FromResult<IEnumerable<QueueStatistic>>(new[]
+        {
+            new QueueStatistic()
+            {
+                Name = "queue-1",
+            }
+        });
     }
 
     public class APIGatewayAppFactory : WebApplicationFactory<Startup>

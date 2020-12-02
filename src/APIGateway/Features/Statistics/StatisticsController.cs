@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,10 +39,13 @@ namespace APIGateway.Features.Statistics
         [HttpGet]
         [Route("/queue-statistic")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<string>> GetQueueStatistics()
+        public async Task<ActionResult<IEnumerable<FlatQueueStatistic>>> GetQueueStatistics()
         {
-            return "";
+            var queues = await rabbitMonitoring.GetQueueStatistics();
+
+            logger.LogInformation("Received {@Queues}", queues);
+
+            return Ok(queues.Select(FlatQueueStatistic.From));
         }
     }
 }

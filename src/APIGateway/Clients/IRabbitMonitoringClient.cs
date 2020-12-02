@@ -9,5 +9,8 @@ namespace APIGateway.Clients
     {
         [Get("/api/nodes")]
         Task<IEnumerable<NodeStatistic>> GetNodeStatistics();
+
+        [Get("/api/queues")]
+        Task<IEnumerable<QueueStatistic>> GetQueueStatistics();
     }
 }

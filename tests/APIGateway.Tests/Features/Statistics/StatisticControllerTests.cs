@@ -1,5 +1,6 @@
 ﻿using APIGateway.Features.Statistics;
 using FluentAssertions;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -48,12 +49,26 @@ namespace APIGateway.Tests.Features.Statistics
         public virtual async Task Get_QueueStatistics_Responds_Ok()
         {
             // Act
-            var response = await ApiClient.GetAsync(NodeStatisticEndpoint);
+            var response = await ApiClient.GetAsync(QueueStatisticEndpoint);
 
             // Assert
 
             response.Should().NotBeNull();
             response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public virtual async Task Get_QueueStatistics_Returns_Data()
+        {
+            // Act
+            var response = await ApiClient.GetAsync(QueueStatisticEndpoint);
+
+            response.Should().NotBeNull();
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadFromJsonAsync<List<FlatQueueStatistic>>();
+
+            data.Should().NotBeNullOrEmpty();
         }
     }
 
