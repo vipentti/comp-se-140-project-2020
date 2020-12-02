@@ -14,7 +14,7 @@ namespace APIGateway.Tests.Features.Statistics
 
         private HttpClient _client;
 
-        private HttpClient HttpClient
+        private HttpClient ApiClient
         {
             get
             {
@@ -39,7 +39,7 @@ namespace APIGateway.Tests.Features.Statistics
         public async Task Get_NodeStatistics_Responds_Ok()
         {
             // Act
-            var response = await HttpClient.GetAsync(NodeStatisticEndpoint);
+            var response = await ApiClient.GetAsync(NodeStatisticEndpoint);
 
             // Assert
 
@@ -51,10 +51,12 @@ namespace APIGateway.Tests.Features.Statistics
         public async Task Get_NodeStatistics_Returns_NodeStatisticData()
         {
             // Act
-            var response = await HttpClient.GetAsync(NodeStatisticEndpoint);
+            var response = await ApiClient.GetAsync(NodeStatisticEndpoint);
 
             response.Should().NotBeNull();
             response.EnsureSuccessStatusCode();
+
+            var contentString = await response.Content.ReadAsStringAsync();
 
             NodeStatistic stats = await response.Content.ReadFromJsonAsync<NodeStatistic>();
 
