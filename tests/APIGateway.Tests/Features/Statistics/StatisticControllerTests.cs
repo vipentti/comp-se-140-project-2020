@@ -60,13 +60,30 @@ namespace APIGateway.Tests.Features.Statistics
         [Fact]
         public virtual async Task Get_QueueStatistics_Returns_Data()
         {
+            async Task<List<FlatQueueStatistic>> makeRequest()
+            {
+                var response = await ApiClient.GetAsync(QueueStatisticEndpoint);
+
+                response.Should().NotBeNull();
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadFromJsonAsync<List<FlatQueueStatistic>>();
+            }
+
             // Act
-            var response = await ApiClient.GetAsync(QueueStatisticEndpoint);
 
-            response.Should().NotBeNull();
-            response.EnsureSuccessStatusCode();
+            var data = await makeRequest();
 
-            var data = await response.Content.ReadFromJsonAsync<List<FlatQueueStatistic>>();
+            int attempts = 5;
+
+            // The endpoint may return empty set of data before RabbitMQ has been fully started when
+            // running e2e tests
+            while (data.Count == 0 && attempts >= 0)
+            {
+                --attempts;
+                await Task.Delay(1000);
+                data = await makeRequest();
+            }
 
             data.Should().NotBeNullOrEmpty();
         }
