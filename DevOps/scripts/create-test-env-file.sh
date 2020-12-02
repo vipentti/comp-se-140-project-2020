@@ -2,9 +2,14 @@
 
 envfile="${1:?PathRequired}"
 
-touch "${envfile}"
-echo "TEST_FILTER=${TEST_FILTER}" >> "${envfile}"
-echo "HttpServerUrl=${HttpServerUrl}" >> "${envfile}"
-echo "FailingTest=${FailingTest:-}" >> "${envfile}"
-echo "E2E=${E2E}" >> "${envfile}"
-echo "ApiGatewayUrl=${ApiGatewayUrl}" >> "${envfile}"
+cat << EOF > "${envfile}"
+TEST_FILTER=${TEST_FILTER}
+FailingTest=${FailingTest}
+EXTRA_RUN_ARGS=${EXTRA_RUN_ARGS}
+E2E=${E2E}
+HTTP_SERVER_PORT=${HTTP_SERVER_PORT}
+APIGATEWAY_PORT=${APIGATEWAY_PORT}
+RABBITMQ_PUBLIC_PORT=${RABBITMQ_PUBLIC_PORT}
+RABBITMQ_MANAGEMENT_PUBLIC_PORT=${RABBITMQ_MANAGEMENT_PUBLIC_PORT}
+REDIS_PUBLIC_PORT=${REDIS_PUBLIC_PORT}
+EOF
