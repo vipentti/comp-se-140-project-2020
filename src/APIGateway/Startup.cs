@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
 using Refit;
 using System;
 
@@ -59,7 +60,14 @@ namespace APIGateway
                     client.DefaultRequestHeaders.Authorization = new("Basic", Convert.ToBase64String(
                         System.Text.Encoding.UTF8.GetBytes($"{rabbitOptions.Username}:{rabbitOptions.Password}")
                     ));
-                });
+                    // Retry few times if an exception was thrown
+                }).AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(new[] {
+                    TimeSpan.FromMilliseconds(1000),
+                    TimeSpan.FromMilliseconds(1500),
+                    TimeSpan.FromMilliseconds(2500),
+                    TimeSpan.FromMilliseconds(4500),
+                    TimeSpan.FromMilliseconds(6500),
+                }));
 
             services.AddRefitClient<IMessageApiService>(new RefitSettings(new ApiContentSerializer()))
                 .ConfigureHttpClient(client =>
