@@ -1,5 +1,7 @@
-﻿using FluentAssertions;
+﻿using APIGateway.Features.Statistics;
+using FluentAssertions;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -43,6 +45,21 @@ namespace APIGateway.Tests.Features.Statistics
 
             response.Should().NotBeNull();
             response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task Get_NodeStatistics_Returns_NodeStatisticData()
+        {
+            // Act
+            var response = await HttpClient.GetAsync(NodeStatisticEndpoint);
+
+            response.Should().NotBeNull();
+            response.EnsureSuccessStatusCode();
+
+            NodeStatistic stats = await response.Content.ReadFromJsonAsync<NodeStatistic>();
+
+            stats.Should().NotBeNull();
+            stats.Name.Should().Be("rabbit@rabbitmq");
         }
     }
 }
