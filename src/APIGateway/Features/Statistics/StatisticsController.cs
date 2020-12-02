@@ -34,5 +34,14 @@ namespace APIGateway.Features.Statistics
 
             return first is not null ? Ok(first) : NotFound();
         }
+
+        [HttpGet]
+        [Route("/queue-statistic")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<string>> GetQueueStatistics()
+        {
+            return "";
+        }
     }
 }
