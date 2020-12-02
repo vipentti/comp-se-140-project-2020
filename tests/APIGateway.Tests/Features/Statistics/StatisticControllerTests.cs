@@ -13,6 +13,7 @@ namespace APIGateway.Tests.Features.Statistics
     public abstract class StatisticControllerTestBase
     {
         protected const string NodeStatisticEndpoint = "/node-statistic";
+        protected const string QueueStatisticEndpoint = "/queue-statistic";
 
         protected abstract HttpClient ApiClient { get; }
 
@@ -41,6 +42,18 @@ namespace APIGateway.Tests.Features.Statistics
 
             stats.Should().NotBeNull();
             stats.Name.Should().Be("rabbit@rabbitmq");
+        }
+
+        [Fact]
+        public virtual async Task Get_QueueStatistics_Responds_Ok()
+        {
+            // Act
+            var response = await ApiClient.GetAsync(NodeStatisticEndpoint);
+
+            // Assert
+
+            response.Should().NotBeNull();
+            response.EnsureSuccessStatusCode();
         }
     }
 

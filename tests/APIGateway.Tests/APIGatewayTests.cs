@@ -18,6 +18,7 @@ namespace APIGateway.Tests
         [InlineData("/state")]
         [InlineData("/run-log")]
         [InlineData("/node-statistic")]
+        [InlineData("/queue-statistic")]
         public async Task Get_Endpoint_Returns_Success_StatusCode(string endpoint)
         {
             // Arrange
