@@ -50,6 +50,12 @@ namespace APIGateway
 
             var apiOptions = Configuration.Get<APIOptions>();
 
+            services.AddRefitClient<IRabbitMonitoringClient>(new RefitSettings())
+                .ConfigureHttpClient(client =>
+                {
+                    client.BaseAddress = new System.Uri(apiOptions.RabbitManagementUrl);
+                });
+
             services.AddRefitClient<IMessageApiService>(new RefitSettings(new ApiContentSerializer()))
                 .ConfigureHttpClient(client =>
                 {
