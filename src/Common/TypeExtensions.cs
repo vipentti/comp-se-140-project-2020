@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Common
 {
@@ -48,6 +51,13 @@ namespace Common
             }
 
             return type.IsGenericType && type.GetGenericTypeDefinition() == @interface;
+        }
+
+        public static IEnumerable<Type> GetTypesWithInterface(this Assembly assembly, Type @interface)
+        {
+            return assembly
+                .GetTypes()
+                .Where(type => type.ImplementsOrDerives(@interface));
         }
     }
 }
