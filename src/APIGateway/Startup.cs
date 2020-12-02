@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Refit;
+using System;
 
 namespace APIGateway
 {
@@ -49,11 +50,15 @@ namespace APIGateway
             });
 
             var apiOptions = Configuration.Get<APIOptions>();
+            var rabbitOptions = Configuration.GetSection("RabbitMQ").Get<RabbitMQOptions>();
 
-            services.AddRefitClient<IRabbitMonitoringClient>(new RefitSettings())
+            services.AddRefitClient<IRabbitMonitoringClient>(new RefitSettings(new SystemTextJsonContentSerializer()))
                 .ConfigureHttpClient(client =>
                 {
                     client.BaseAddress = new System.Uri(apiOptions.RabbitManagementUrl);
+                    client.DefaultRequestHeaders.Authorization = new("Basic", Convert.ToBase64String(
+                        System.Text.Encoding.UTF8.GetBytes($"{rabbitOptions.Username}:{rabbitOptions.Password}")
+                    ));
                 });
 
             services.AddRefitClient<IMessageApiService>(new RefitSettings(new ApiContentSerializer()))

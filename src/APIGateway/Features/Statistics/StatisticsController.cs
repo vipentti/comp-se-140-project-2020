@@ -1,6 +1,7 @@
 ﻿using APIGateway.Clients;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,11 +11,13 @@ namespace APIGateway.Features.Statistics
     [Produces("application/json")]
     public class StatisticsController : ControllerBase
     {
+        private readonly ILogger<StatisticsController> logger;
         private readonly IRabbitMonitoringClient rabbitMonitoring;
 
-        public StatisticsController(IRabbitMonitoringClient rabbitMonitoring)
+        public StatisticsController(IRabbitMonitoringClient rabbitMonitoring, ILogger<StatisticsController> logger)
         {
             this.rabbitMonitoring = rabbitMonitoring;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -24,6 +27,8 @@ namespace APIGateway.Features.Statistics
         public async Task<ActionResult<NodeStatistic>> GetNodeStatistics()
         {
             var stats = await rabbitMonitoring.GetNodeStatistics();
+
+            logger.LogInformation("Received {@Stats}", stats);
 
             var first = stats.FirstOrDefault();
 
