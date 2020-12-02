@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace E2E.Tests
@@ -12,6 +13,23 @@ namespace E2E.Tests
             }
         }
 
-        private static bool IsE2EEnvironment() => System.Environment.GetEnvironmentVariable("E2E") != null;
+        private static bool IsE2EEnvironment()
+        {
+            var envvar = Environment.GetEnvironmentVariable("E2E");
+
+            if (string.IsNullOrWhiteSpace(envvar))
+            {
+                return false;
+            }
+
+            try
+            {
+                return Convert.ToBoolean(envvar);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
