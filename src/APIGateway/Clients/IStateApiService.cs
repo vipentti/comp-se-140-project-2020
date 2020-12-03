@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Common.Enumerations;
+﻿using Common.Enumerations;
 using Refit;
+using System.Threading.Tasks;
 
 namespace APIGateway.Clients
 {

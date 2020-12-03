@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Common.Messages;
+﻿using Common.Messages;
 using Refit;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace APIGateway.Clients
 {

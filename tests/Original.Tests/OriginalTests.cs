@@ -1,6 +1,5 @@
 using Common;
 using Common.Enumerations;
-using Common.RedisSupport;
 using Common.States;
 using Microsoft.Extensions.Logging;
 using Moq;
