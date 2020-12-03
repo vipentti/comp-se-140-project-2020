@@ -33,7 +33,6 @@ if [ ! $? -eq 0 ]; then
     exit 1;
 fi
 
-
 docker-compose --project-name "${E2E_PROJECT_NAME}" --env-file "${ENV_FILE}" up -d --no-build
 
 if [ ! $? -eq 0 ]; then

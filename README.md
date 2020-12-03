@@ -83,8 +83,6 @@ The application consists of five [.NET 5](https://devblogs.microsoft.com/dotnet/
 
 All of the services can found in [docker-compose.yml](docker-compose.yml).
 
-## Overview of the services
-
 ### `src/APIGateway`
 
 The main entrypoint of the application. By default exposed via `http://localhost:8081`. Consists of various endpoint which can be utilized for both getting information about the current state of the application in addition to updating the current state. The endpoints are explained in more detail in [API Gateway endpoints](#api-gateway-endpoints)

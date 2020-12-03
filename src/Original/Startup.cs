@@ -28,25 +28,10 @@ namespace Original
                 opts.InputFormatters.Insert(0, new EnumerationInputFormatter());
             });
 
-            // Common.ProgramCommon.ConfigureCommonServices(services, Configuration);
-
             services.ConfigureCommonServices(Configuration);
 
-            //services.AddSingleton<IRedisClient, RedisClient>();
             services.AddSingleton<Original>();
             services.AddHostedService(it => it.GetRequiredService<Original>());
-            //var apiOptions = Configuration.Get<APIOptions>();
-            //services.AddHttpClient<IMessageService, MessageService>(svc =>
-            //{
-            //    svc.BaseAddress = new System.Uri(apiOptions.HttpServerUrl);
-            //});
-
-            //services.AddTransient<IDateTimeService, DateTimeService>();
-
-            //services.AddSingleton<IStateService, SessionStateService>();
-            //services.AddSingleton<IRunLogService, InMemoryRunLogService>();
-
-            //services.Configure<APIOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,11 +9,6 @@ usage: Test
 EOF
 }
 
-# if [ "$1" = "" ]; then
-#     usage
-#     exit 1
-# fi
-
 Target="build"
 tag="latest"
 CacheImageAndTag=""
