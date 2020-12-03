@@ -1,15 +1,24 @@
 # COMP.SE.140 Project - End report
 
+- [COMP.SE.140 Project - End report](#compse140-project---end-report)
+  - [Overview of CI/CD pipeline](#overview-of-cicd-pipeline)
+    - [Build-stage](#build-stage)
+    - [Test-stage](#test-stage)
+    - [Deploy-stage](#deploy-stage)
+    - [Limitations of the pipeline](#limitations-of-the-pipeline)
+  - [Learnings and challenges](#learnings-and-challenges)
+  - [Examples from running the pipeline](#examples-from-running-the-pipeline)
+  - [Appendix A: `.gitlab-ci.yml`](#appendix-a-gitlab-ciyml)
+
 - Author: Ville Penttinen
 
 Instructions on how to run the application and its tests may be found in [README.md](README.md)
 
-Total amount of hours used for the project was about 70 hours in total. Implementation took about 60 hours and rest of the time was spent in writing the README and EndReport and documenting things such as the `.gitlab-ci.yml`.
-
+Total amount of hours used for the project was about 70 hours in total, this is the time spent on the project, time spent on the original exercise is not included. Implementation took about 60 hours and rest of the time was spent in writing the README and EndReport and documenting things such as the `.gitlab-ci.yml`.
 
 ## Overview of CI/CD pipeline
 
-This section gives an overview of the CI/CD pipeline utilizing Gitlab [.gitlab-ci.yml](./.gitlab-ci.yml). The full contents of the file are also available in [Appendix A](#appendix-a-gitlab-ciyml).
+This section gives an overview of the CI/CD pipeline utilizing Gitlab `.gitlab-ci.yml`. The full contents of the file are also available in [Appendix A](#appendix-a-gitlab-ciyml).
 
 The Gitlab CI/CD pipeline is configured to utilize [Docker engine](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html) in the [Gitlab runner](https://docs.gitlab.com/ee/ci/runners/README.html).
 This provides flexibility in allowing testing of the pipeline locally and makes the environment reproducible.
@@ -24,7 +33,7 @@ The stages are executed in the order above. Each stage may contain multiple jobs
 
 ### Build-stage
 
-In the `build`-stage the docker-images are built using a custom shell-script. The shell script takes advantage of the multi-stage [Dockerfile](./Dockerfile) to first build testrunner-stage. This testrunner-stage can then be used as a cache for the subsequent application images. This ensures that the dependencies are restored only once. Additionally the full solution is also built only once. The testrunner-stage can be utilized directly to execute the unit and end-to-end tests.
+In the `build`-stage the docker-images are built using a custom shell-script. The shell script takes advantage of the multi-stage Dockerfile to first build testrunner-stage. This testrunner-stage can then be used as a cache for the subsequent application images. This ensures that the dependencies are restored only once. Additionally the full solution is also built only once. The testrunner-stage can be utilized directly to execute the unit and end-to-end tests.
 
 After build-stage has been successfully completed, the built-images are tested in the test-stage.
 
@@ -71,6 +80,27 @@ Test-driven development is not without drawbacks. For example development veloci
 Overall test-driven development is something worth considering when starting a project with some sort of specification. It's a useful tool in a developers toolbox.
 
 Documeting the code and scripts that were utilized is something I wish I had the time and energy to do. As in many projects, documentation is often the last thing to be done.
+
+## Examples from running the pipeline
+
+Successful run - jobs view
+
+![Successful run - jobs view](docs/images/success-jobs.png "Successful run - jobs view")
+
+Successful run - tests view
+
+![Successful run - tests view](docs/images/success-tests.png "Successful run - tests view")
+
+Failed run - jobs view
+
+![Failed run - jobs view](docs/images/failure-jobs.png "Failed run - jobs view")
+
+
+Failed run - tests view
+
+![Failed run - tests view](docs/images/failure-tests.png "Failed run - tests view")
+
+<div class="page-break"></div>
 
 ## Appendix A: `.gitlab-ci.yml`
 
