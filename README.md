@@ -21,7 +21,8 @@ It has been tested on Windows and on Linux.
 1. Clone the repository
 2. Navigate into the folder and run
    ```
-   docker-compose up --build -d
+   docker-compose build
+   docker-compose up -d
    ```
    - This will take a while the first time
 3. Wait for up to 30 seconds
