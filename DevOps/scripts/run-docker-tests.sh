@@ -33,13 +33,13 @@ else
 fi
 
 if [ ! -f "${EnvFile}" ] ; then
-    echo "env-file ${EnvFile} does not exist. Creating an empty file."
-    touch "${EnvFile}"
-else
-    echo "Using env-file ${EnvFile}"
-    cat "${EnvFile}"
-    echo ""
+    echo "env-file ${EnvFile} does not exist. Creating..."
+    /bin/sh "${script_dir}/create-test-env-file.sh" "${EnvFile}"
 fi
+
+echo "Using env-file ${EnvFile}"
+cat "${EnvFile}"
+echo ""
 
 echo "Starting test run..."
 echo ""
