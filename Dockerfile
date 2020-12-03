@@ -53,8 +53,6 @@ WORKDIR /app
 ARG TargetProject
 ENV EnvTargetProject=${TargetProject}
 
-# RUN apt-get update && apt-get install -y --no-install-recommends netcat
-
 COPY --from=publish /app/publish .
 
 # Create a script to run the specified TargetProject

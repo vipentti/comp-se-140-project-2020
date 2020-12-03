@@ -23,26 +23,8 @@ build:
   script:
     - ./DevOps/scripts/build-images.sh --tag "${tag}"
 
-# test:
-#   stage: test
-#   variables:
-#     # Exclude E2E tests
-#     TEST_FILTER: "FullyQualifiedName!~E2E"
-#     ENV_FILE: ".env.test"
-#   script:
-#     - ./DevOps/scripts/create-test-env-file.sh ${ENV_FILE}
-#     - ./DevOps/scripts/run-docker-tests.sh ./Dockerfile . ${ENV_FILE} ./unittests
-#   artifacts:
-#     when: always
-#     paths:
-#       - ./unittests/**/*.xml
-#     reports:
-#       junit:
-#         - ./unittests/**/*.xml
-
 test:
   stage: test
-
   variables:
     # Override defaults
     # Since the application may be running
@@ -52,7 +34,6 @@ test:
     REDIS_PUBLIC_PORT: 16379
     HTTP_SERVER_PORT: 9512
     APIGATEWAY_PORT: 9513
-    # TEST_FILTER: "FullyQualifiedName~E2E"
     E2E: "true"
     ENV_FILE: ".env.e2e"
 
@@ -68,6 +49,7 @@ test:
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" original
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" observer
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" httpserver
+    - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" apigateway
     - docker-compose --project-name $E2E_PROJECT_NAME down -v
 
   artifacts:
