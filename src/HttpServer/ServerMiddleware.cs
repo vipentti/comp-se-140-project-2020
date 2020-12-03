@@ -34,7 +34,7 @@ namespace HttpServer
                 if (fileSystem.File.Exists(settings.OutFilePath))
                 {
                     content = await fileSystem.File.ReadAllTextAsync(settings.OutFilePath, System.Text.Encoding.UTF8);
-                    logger.LogInformation("Read from {path}: '{content}'", settings.OutFilePath, content.Replace(Environment.NewLine, "\\n"));
+                    logger.LogInformation("Read from {path}: {ContentLength} bytes", settings.OutFilePath, content.Length);
                 }
             }
             catch (System.IO.FileNotFoundException ex)
