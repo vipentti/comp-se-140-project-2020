@@ -1,30 +1,53 @@
+# The image keyword is the name of the Docker image
+# which the Docker executor runs to perform the CI/CD tasks.
+# In this case we utilize an image with docker-compose installed
 image: docker/compose:1.27.4
 
-### Define variables
+# Define common variables utilized in the CI/CD pipeline
 variables:
+  # This is utilized as a docker-compose --project-name
+  # to allow running the containers even if the actual application
+  # is running.
   E2E_PROJECT_NAME: e2e-test
+
+  # The name of the docker-compose --project-name that will be deployed
+  # in the 'deploy'-job.
   DEFAULT_PROJECT_NAME: ex-5-amqp
+
+  # Docker image tag
   tag: "latest"
 
+# Define the stages supported by the pipeline
+# The stages contain groups of jobs run in each stage.
+# Stages are run in the definition order and jobs inside a stage
+# can be run in parallel
 stages:
   - build
   - test
   - deploy
 
+# Use docker-in-docker service to allow running of
+# docker-commands from inside the Docker executor
 services:
   - docker:dind
 
+# This script is shared between the jobs and run before each job
 before_script:
   - docker info
   - docker-compose version
 
+# Define a build job
+# The build job is set to run in the 'build'-stage
 build:
   stage: build
   script:
     - ./DevOps/scripts/build-images.sh --tag "${tag}"
 
+# Define a test job
+# The test job is set to run in the 'test'-stage
 test:
   stage: test
+  # Define variables specific to the 'test'-job
   variables:
     # Override defaults
     # Since the application may be running
@@ -34,6 +57,7 @@ test:
     REDIS_PUBLIC_PORT: 16379
     HTTP_SERVER_PORT: 9512
     APIGATEWAY_PORT: 9513
+    # Ensure we run end-to-end tests as well
     E2E: "true"
     ENV_FILE: ".env.e2e"
 
@@ -45,6 +69,11 @@ test:
     - 'export EXTRA_RUN_ARGS="--network ${E2E_PROJECT_NAME}_backend"'
     - ./DevOps/scripts/run-docker-tests.sh ./Dockerfile . ${ENV_FILE} ./testresults
 
+  # after_script can be utilized to define a set of commands
+  # which are executed after the job, even if the job fails.
+  # In this case the after_script is utilized to ensure the e2e-test
+  # containers are properly stopped and removed even if the test run fails.
+  # In addition the after_script also prints relevant logs to the console
   after_script:
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" original
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" observer
@@ -52,6 +81,9 @@ test:
     - docker-compose --project-name $E2E_PROJECT_NAME logs --tail="all" apigateway
     - docker-compose --project-name $E2E_PROJECT_NAME down -v
 
+  # artifacts define list of files & directories that are attached
+  # to the job on success. In this case the artifacts are used to upload
+  # the test results from the 'test'-job.
   artifacts:
     when: always
     paths:
@@ -60,8 +92,13 @@ test:
       junit:
         - ./testresults/**/*.xml
 
+# Define a deploy job
+# The deploy job is set to run in the 'deploy'-stage
 deploy:
   stage: deploy
+  # The deploy job brings down the containers if they are running.
+  # Then the containers are restarted using the previously built and tested
+  # docker images.
   script:
     # Ensure we re-start the containers
     - docker-compose --project-name $DEFAULT_PROJECT_NAME down
